@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZONE IQ™ | Adversarial Feasibility Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #06080c;
+            --bg-secondary: #0c1017;
+            --bg-card: #111720;
+            --bg-node: #151c28;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-muted: #5f6368;
+            --accent-teal: #00ffc8;
+            --accent-teal-dim: rgba(0, 255, 200, 0.08);
+            --accent-teal-glow: rgba(0, 255, 200, 0.4);
+            --accent-red: #ff4757;
+            --accent-red-dim: rgba(255, 71, 87, 0.1);
+            --accent-amber: #ffa502;
+            --accent-amber-dim: rgba(255, 165, 2, 0.1);
+            --accent-blue: #3742fa;
+            --accent-purple: #a55eea;
+            --border: #1a2235;
+            --border-light: #243046;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(0, 255, 200, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(165, 94, 234, 0.02) 0%, transparent 50%),
+                linear-gradient(90deg, transparent 49px, rgba(26, 34, 53, 0.25) 49px, rgba(26, 34, 53, 0.25) 50px, transparent 50px),
+                linear-gradient(transparent 49px, rgba(26, 34, 53, 0.25) 49px, rgba(26, 34, 53, 0.25) 50px, transparent 50px);
+            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.1rem 2rem;
+            background: rgba(12, 16, 23, 0.9);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .logo-tm {
+            font-size: 0.7rem;
+            color: var(--accent-teal);
+            vertical-align: super;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 1.1rem;
+            background: rgba(0, 200, 83, 0.08);
+            border: 1px solid rgba(0, 200, 83, 0.2);
+            border-radius: 20px;
+        }
+
+        .status-badge.processing {
+            background: rgba(255, 165, 2, 0.08);
+            border-color: rgba(255, 165, 2, 0.2);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #00c853;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-badge.processing .status-dot {
+            background: var(--accent-amber);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        .status-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #00c853;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.processing .status-text {
+            color: var(--accent-amber);
+        }
+
+        /* Main Layout - Vertical with Horizontal Workflow */
+        .main {
+            position: relative;
+            z-index: 5;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-section {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Sidebar */
+        .sidebar-left {
+            background: rgba(12, 16, 23, 0.7);
+            border-right: 1px solid var(--border);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 0.85rem;
+        }
+
+        /* Property Card */
+        .property-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .property-address {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .property-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .meta-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .meta-value.highlight {
+            color: var(--accent-teal);
+        }
+
+        /* Constraint Analysis */
+        .constraints-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .constraint-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .constraint-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .constraint-item:first-child {
+            padding-top: 0;
+        }
+
+        .constraint-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .constraint-icon.warning {
+            background: var(--accent-red-dim);
+            color: var(--accent-red);
+            box-shadow: 0 0 8px rgba(255, 71, 87, 0.3);
+        }
+
+        .constraint-icon.caution {
+            background: var(--accent-amber-dim);
+            color: var(--accent-amber);
+        }
+
+        .constraint-icon.pass {
+            background: rgba(0, 200, 83, 0.1);
+            color: #00c853;
+        }
+
+        .constraint-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .constraint-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Pipeline Log */
+        .pipeline-log {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 240px;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 0.65rem;
+            padding: 0.45rem 0;
+            border-bottom: 1px solid var(--border);
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: logAppear 0.3s ease forwards;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        @keyframes logAppear {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .log-message {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .log-message.success {
+            color: #00c853;
+        }
+
+        .log-message.processing {
+            color: var(--accent-amber);
+        }
+
+        .log-message.info {
+            color: var(--accent-blue);
+        }
+
+        /* Workflow Canvas - Horizontal */
+        .workflow-canvas {
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            overflow-x: auto;
+        }
+
+        .workflow-container {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: 0;
+        }
+
+        /* Workflow Nodes - Large Square/Rectangular */
+        .workflow-node {
+            background: var(--bg-node);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1.25rem;
+            min-width: 200px;
+            max-width: 260px;
+            min-height: 120px;
+            position: relative;
+            opacity: 0.4;
+            transform: scale(0.98);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Agent nodes are larger */
+        .workflow-node.agent-node {
+            min-width: 220px;
+            max-width: 280px;
+            min-height: 140px;
+        }
+
+        .workflow-node.active {
+            opacity: 1;
+            transform: scale(1);
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.25);
+        }
+
+        .workflow-node.completed {
+            opacity: 1;
+            transform: scale(1);
+            border-color: rgba(0, 200, 83, 0.4);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .node-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .node-icon.input {
+            background: linear-gradient(135deg, #3742fa, #5352ed);
+        }
+
+        .node-icon.process {
+            background: linear-gradient(135deg, #a55eea, #8854d0);
+        }
+
+        .node-icon.agent-red {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+        }
+
+        .node-icon.agent-teal {
+            background: linear-gradient(135deg, #00ffc8, #00d4aa);
+            color: #06080c;
+        }
+
+        .node-icon.judge {
+            background: linear-gradient(135deg, #ffa502, #ff7f50);
+            color: #06080c;
+        }
+
+        .node-icon.output {
+            background: linear-gradient(135deg, #00c853, #00e676);
+        }
+
+        .node-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .node-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            display: block;
+            margin-top: 0.15rem;
+        }
+
+        .node-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-left: 0;
+            min-height: 1.5rem;
+            margin-top: 0.5rem;
+            flex: 1;
+        }
+
+        .node-content code {
+            background: rgba(0, 255, 200, 0.1);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-teal);
+        }
+
+        .node-details {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-light);
+            line-height: 1.5;
+        }
+
+        .node-details strong {
+            color: var(--text-primary);
+        }
+
+        .node-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .workflow-node.active .node-status {
+            background: var(--accent-amber);
+            box-shadow: 0 0 8px rgba(255, 165, 2, 0.5);
+            animation: statusPulse 1s ease-in-out infinite;
+        }
+
+        .workflow-node.completed .node-status {
+            background: #00c853;
+            box-shadow: 0 0 8px rgba(0, 200, 83, 0.5);
+            animation: none;
+        }
+
+        @keyframes statusPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .node-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-purple));
+            border-radius: 0 0 10px 10px;
+            width: 0;
+        }
+
+        .workflow-node.active .node-progress {
+            animation: progressFill 1.2s ease-out forwards;
+        }
+
+        @keyframes progressFill {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        /* Connectors - Horizontal */
+        .connector {
+            width: 30px;
+            height: 3px;
+            background: var(--border-light);
+            position: relative;
+            transition: all 0.5s ease;
+            align-self: center;
+        }
+
+        .connector.active {
+            background: var(--accent-teal);
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.4);
+        }
+
+        .connector::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 7px solid var(--border-light);
+            transition: all 0.5s ease;
+        }
+
+        .connector.active::after {
+            border-left-color: var(--accent-teal);
+        }
+
+        .data-flow {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            box-shadow: 0 0 8px var(--accent-teal-glow);
+        }
+
+        .connector.active .data-flow {
+            animation: flowRight 0.6s ease-in-out forwards;
+        }
+
+        @keyframes flowRight {
+            0% {
+                left: -5px;
+                opacity: 1;
+            }
+
+            100% {
+                left: calc(100% + 5px);
+                opacity: 0;
+            }
+        }
+
+        /* Branch - Vertical for horizontal flow */
+        .branch-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            position: relative;
+        }
+
+        .branch-line {
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: calc(100% - 20px);
+            background: var(--border-light);
+            transition: all 0.5s ease;
+        }
+
+        .branch-line.active {
+            background: var(--accent-teal);
+            box-shadow: 0 0 8px rgba(0, 255, 200, 0.3);
+        }
+
+        .branch-line::before,
+        .branch-line::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background: inherit;
+        }
+
+        .branch-line::before {
+            top: 0;
+        }
+
+        .branch-line::after {
+            bottom: 0;
+        }
+
+        /* Right Sidebar - Compact */
+        .sidebar-right {
+            background: rgba(12, 16, 23, 0.7);
+            border-left: 1px solid var(--border);
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            width: 400px;
+            flex-shrink: 0;
+        }
+
+
+        /* Zone IQ Score Card - Compact */
+        .score-card {
+            background: linear-gradient(135deg, var(--accent-teal-dim) 0%, rgba(0, 255, 200, 0.02) 100%);
+            border: 1px solid rgba(0, 255, 200, 0.2);
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-teal);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .score-ring {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 0.75rem;
+        }
+
+        .score-ring svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-bg {
+            fill: none;
+            stroke: var(--border-light);
+            stroke-width: 8;
+        }
+
+        .score-progress {
+            fill: none;
+            stroke: var(--accent-teal);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 264;
+            stroke-dashoffset: 264;
+            filter: drop-shadow(0 0 8px var(--accent-teal-glow));
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+            text-shadow: 0 0 30px var(--accent-teal-glow);
+        }
+
+        .score-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .score-factor {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .factor-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .score-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .verdict-card {
+            background: linear-gradient(135deg, var(--accent-amber-dim) 0%, rgba(255, 165, 2, 0.03) 100%);
+            border: 1px solid rgba(255, 165, 2, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .verdict-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        .verdict-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-amber);
+            text-shadow: 0 0 25px rgba(255, 165, 2, 0.4);
+        }
+
+        .verdict-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.85rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-purple));
+        }
+
+        .metric-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+        }
+
+        .metric-unit {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .recommendation-card {
+            background: var(--accent-teal-dim);
+            border: 1px solid rgba(0, 255, 200, 0.15);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .rec-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .rec-icon {
+            width: 22px;
+            height: 22px;
+            background: var(--accent-teal);
+            color: var(--bg-primary);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .rec-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-teal);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rec-text {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+
+
+        /* Tabs */
+        .tabs-container {
+            margin-top: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.75rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 0.5rem 0.25rem;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-teal);
+            border-bottom-color: var(--accent-teal);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.68rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .detail-value.pass {
+            color: #00c853;
+        }
+
+        .detail-value.warn {
+            color: var(--accent-amber);
+        }
+
+        .detail-value.fail {
+            color: var(--accent-red);
+        }
+
+        /* PDF Button */
+        .pdf-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+            background: linear-gradient(135deg, var(--accent-teal), #00d4aa);
+            border: none;
+            border-radius: 8px;
+            color: var(--bg-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 200, 0.3);
+        }
+
+        .pdf-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Report Items */
+        .report-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            padding: 0.65rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-item.go {
+            background: rgba(0, 200, 83, 0.08);
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .report-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .report-icon.check {
+            background: rgba(0, 200, 83, 0.15);
+            color: #00c853;
+        }
+
+        .report-icon.warning {
+            background: var(--accent-amber-dim);
+            color: var(--accent-amber);
+        }
+
+        .report-icon.go {
+            background: #00c853;
+            color: #06080c;
+            font-size: 0.55rem;
+        }
+
+        .report-content {
+            flex: 1;
+        }
+
+        .report-name {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.15rem;
+        }
+
+        .report-detail {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+        }
+
+        /* Collapsible Report Sections */
+        .report-sections {
+            margin-top: 1rem;
+        }
+
+        .report-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 0.65rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .report-section:hover {
+            border-color: var(--border-light);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .section-icon.zoning {
+            background: linear-gradient(135deg, #3742fa, #5352ed);
+            color: white;
+        }
+
+        .section-icon.potential {
+            background: linear-gradient(135deg, #00ffc8, #00d4aa);
+            color: var(--bg-primary);
+        }
+
+        .section-icon.risk {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+        }
+
+        .section-icon.gonogo {
+            background: linear-gradient(135deg, #ffa502, #ff7f50);
+            color: var(--bg-primary);
+        }
+
+        .section-icon.precedent {
+            background: linear-gradient(135deg, #a55eea, #8854d0);
+            color: white;
+        }
+
+        .section-title-text {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-toggle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .report-section.expanded .section-toggle {
+            transform: rotate(180deg);
+        }
+
+        .section-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .report-section.expanded .section-body {
+            max-height: 600px;
+            padding: 0 1rem 1rem;
+        }
+
+        .section-content {
+            border-top: 1px solid var(--border);
+            padding-top: 0.75rem;
+        }
+
+        .compliance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.68rem;
+        }
+
+        .compliance-row:last-child {
+            border-bottom: none;
+        }
+
+        .compliance-label {
+            color: var(--text-secondary);
+        }
+
+        .compliance-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .compliance-value.pass {
+            color: #00c853;
+        }
+
+        .compliance-value.warn {
+            color: var(--accent-amber);
+        }
+
+        .compliance-value.fail {
+            color: var(--accent-red);
+        }
+
+        .risk-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+
+        .risk-severity {
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .risk-severity.high {
+            background: var(--accent-red-dim);
+            color: var(--accent-red);
+        }
+
+        .risk-severity.medium {
+            background: var(--accent-amber-dim);
+            color: var(--accent-amber);
+        }
+
+        .risk-severity.low {
+            background: rgba(0, 200, 83, 0.1);
+            color: #00c853;
+        }
+
+        .risk-text {
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .gonogo-verdict {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 255, 200, 0.05);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .gonogo-status {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+            margin-bottom: 0.25rem;
+        }
+
+        .gonogo-confidence {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .next-steps {
+            margin-top: 0.5rem;
+        }
+
+        .next-step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+        }
+
+        .next-step-item::before {
+            content: '→';
+            color: var(--accent-teal);
+            font-weight: 600;
+        }
+
+        .precedent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .precedent-item:last-child {
+            border-bottom: none;
+        }
+
+        .precedent-info {
+            flex: 1;
+        }
+
+        .precedent-address {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .precedent-details {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        .precedent-status {
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(0, 200, 83, 0.15);
+            color: #00c853;
+        }
+
+        /* Precedent Analysis Node */
+        .node-icon.precedent {
+            background: linear-gradient(135deg, #a55eea, #8854d0);
+        }
+
+        .waiting-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .waiting-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.3;
+        }
+
+        .waiting-text {
+            font-size: 0.8rem;
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 10;
+            padding: 0.6rem 1.5rem;
+            background: rgba(12, 16, 23, 0.9);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer-stat-label {
+            font-size: 0.58rem;
+            color: var(--text-muted);
+        }
+
+        .footer-stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent-teal);
+        }
+
+        .footer-right {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.58rem;
+            color: var(--text-muted);
+        }
+
+        .typing::after {
+            content: '▋';
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+
+        /* Tablet and below - stack layout vertically */
+        @media (max-width: 1024px) {
+            .top-section {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .sidebar-left {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                max-height: none;
+                overflow-y: visible;
+            }
+
+            .sidebar-right {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--border);
+            }
+
+            .workflow-canvas {
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 1rem;
+                min-height: auto;
+            }
+
+            .workflow-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+                min-width: auto;
+                width: 100%;
+            }
+
+            .workflow-node {
+                min-width: 280px;
+                max-width: 320px;
+                min-height: 100px;
+                width: 100%;
+            }
+
+            .workflow-node.agent-node {
+                min-width: 280px;
+                max-width: 320px;
+            }
+
+            /* Vertical connectors for mobile */
+            .connector {
+                width: 3px;
+                height: 25px;
+                align-self: center;
+            }
+
+            .connector::after {
+                right: auto;
+                left: 50%;
+                top: auto;
+                bottom: -5px;
+                transform: translateX(-50%);
+                border-top: 7px solid var(--border-light);
+                border-bottom: none;
+                border-left: 5px solid transparent;
+                border-right: 5px solid transparent;
+            }
+
+            .connector.active::after {
+                border-top-color: var(--accent-teal);
+                border-left-color: transparent;
+            }
+
+            /* Vertical branch layout */
+            .branch-row {
+                flex-direction: row;
+                justify-content: center;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            .branch-line {
+                display: none;
+            }
+
+            .header {
+                padding: 0.75rem 1rem;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* Mobile landscape and below */
+        @media (max-width: 768px) {
+            .main {
+                overflow-y: auto;
+            }
+
+            .sidebar-left,
+            .sidebar-right {
+                padding: 0.75rem;
+            }
+
+            .property-card,
+            .constraints-card,
+            .pipeline-log {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .property-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-node {
+                min-width: 160px;
+                max-width: 180px;
+                min-height: 90px;
+                padding: 1rem;
+            }
+
+            .workflow-node.agent-node {
+                min-width: 180px;
+                max-width: 200px;
+            }
+
+            .node-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.85rem;
+            }
+
+            .node-title {
+                font-size: 0.95rem;
+            }
+
+            .connector {
+                width: 20px;
+            }
+
+            .score-ring {
+                width: 90px;
+                height: 90px;
+            }
+
+            .score-value {
+                font-size: 1.8rem;
+            }
+
+            .score-breakdown {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .tabs-header {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                font-size: 0.6rem;
+                padding: 0.4rem 0.2rem;
+            }
+
+            .section-header {
+                padding: 0.6rem 0.75rem;
+            }
+
+            .status-badge {
+                padding: 0.4rem 0.75rem;
+            }
+
+            .status-text {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Mobile portrait */
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.6rem 0.75rem;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+            }
+
+            .status-badge {
+                padding: 0.3rem 0.5rem;
+            }
+
+            .status-text {
+                font-size: 0.65rem;
+            }
+
+            .status-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .section-title {
+                font-size: 0.7rem;
+            }
+
+            .property-address {
+                font-size: 0.95rem;
+            }
+
+            .workflow-canvas {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .workflow-node {
+                min-width: 140px;
+                max-width: 160px;
+                min-height: 80px;
+                padding: 0.75rem;
+                border-radius: 10px;
+            }
+
+            .workflow-node.agent-node {
+                min-width: 150px;
+                max-width: 170px;
+            }
+
+            .node-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.75rem;
+            }
+
+            .node-title {
+                font-size: 0.85rem;
+            }
+
+            .node-content {
+                font-size: 0.75rem;
+            }
+
+            .connector {
+                width: 15px;
+            }
+
+            .branch-row {
+                gap: 0.3rem;
+            }
+
+            .score-card,
+            .verdict-card,
+            .recommendation-card {
+                padding: 1rem;
+            }
+
+            .score-ring {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 0.5rem;
+            }
+
+            .score-value {
+                font-size: 1.5rem;
+            }
+
+            .score-label {
+                font-size: 0.7rem;
+            }
+
+            .verdict-value {
+                font-size: 1.2rem;
+            }
+
+            .metric-box {
+                padding: 0.65rem;
+            }
+
+            .metric-value {
+                font-size: 1.1rem;
+            }
+
+            .report-section {
+                margin-bottom: 0.5rem;
+            }
+
+            .footer {
+                padding: 0.4rem 0.75rem;
+            }
+
+            .footer-stat-label,
+            .footer-stat-value,
+            .footer-right {
+                font-size: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="bg-grid"></div>
+
+        <header class="header">
+            <div class="logo">
+                <span class="logo-text">ZONE IQ</span>
+                <span class="logo-tm">™</span>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <div class="status-dot"></div>
+                <span class="status-text" id="statusText">INITIALIZING</span>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="top-section">
+                <aside class="sidebar-left">
+                    <span class="section-title">Property Context</span>
+                    <div class="property-card">
+                        <div class="property-address">1247 Kensington Road NW<br>Calgary, AB T2N 3P8</div>
+                        <div class="property-meta">
+                            <div class="meta-item"><span class="meta-label">Zone</span><span
+                                    class="meta-value highlight">R-C2</span></div>
+                            <div class="meta-item"><span class="meta-label">Lot Size</span><span
+                                    class="meta-value">5,280
+                                    SF</span></div>
+                            <div class="meta-item"><span class="meta-label">Frontage</span><span class="meta-value">44
+                                    ft</span></div>
+                            <div class="meta-item"><span class="meta-label">Depth</span><span class="meta-value">120
+                                    ft</span></div>
+                        </div>
+                    </div>
+
+                    <span class="section-title">Constraint Analysis</span>
+                    <div class="constraints-card">
+                        <div class="constraint-item">
+                            <div class="constraint-icon warning">!</div>
+                            <div class="constraint-text">Frontage <strong>44 ft</strong> below min. <strong>50
+                                    ft</strong>
+                            </div>
+                        </div>
+                        <div class="constraint-item">
+                            <div class="constraint-icon caution">~</div>
+                            <div class="constraint-text">Tandem parking required (<strong>6 stalls</strong>)</div>
+                        </div>
+                        <div class="constraint-item">
+                            <div class="constraint-icon pass">✓</div>
+                            <div class="constraint-text">Height <strong>11m</strong> allows 3-storey</div>
+                        </div>
+                        <div class="constraint-item">
+                            <div class="constraint-icon pass">✓</div>
+                            <div class="constraint-text">Transit proximity <strong>280m</strong> to LRT</div>
+                        </div>
+                    </div>
+
+                    <span class="section-title">Pipeline Log</span>
+                    <div class="pipeline-log" id="pipelineLog"></div>
+                </aside>
+
+                <div class="workflow-canvas">
+                    <div class="workflow-container">
+                        <div class="workflow-node" id="node1">
+                            <div class="node-status"></div>
+                            <div class="node-progress"></div>
+                            <div class="node-header">
+                                <div class="node-icon input">IN</div>
+                                <div>
+                                    <div class="node-title">Property Ingestion</div>
+                                    <div class="node-subtitle">gis.loader</div>
+                                </div>
+                            </div>
+                            <div class="node-content" id="node1Content">Waiting...</div>
+                            <div class="node-details">
+                                Parses <strong>GIS data</strong>, lot geometry, zoning overlays
+                            </div>
+                        </div>
+                        <div class="connector" id="conn1">
+                            <div class="data-flow"></div>
+                        </div>
+
+                        <div class="workflow-node" id="node2">
+                            <div class="node-status"></div>
+                            <div class="node-progress"></div>
+                            <div class="node-header">
+                                <div class="node-icon process">R</div>
+                                <div>
+                                    <div class="node-title">Bylaw RAG Engine</div>
+                                    <div class="node-subtitle">rag.retriever</div>
+                                </div>
+                            </div>
+                            <div class="node-content" id="node2Content">Waiting...</div>
+                            <div class="node-details">
+                                Retrieves <strong>bylaw sections</strong>, setbacks, FAR limits
+                            </div>
+                        </div>
+                        <div class="connector" id="conn2">
+                            <div class="data-flow"></div>
+                        </div>
+
+                        <div class="workflow-node" id="nodePrecedent">
+                            <div class="node-status"></div>
+                            <div class="node-progress"></div>
+                            <div class="node-header">
+                                <div class="node-icon precedent">PA</div>
+                                <div>
+                                    <div class="node-title">Precedent Analysis</div>
+                                    <div class="node-subtitle">analysis.precedent</div>
+                                </div>
+                            </div>
+                            <div class="node-content" id="nodePrecedentContent">Waiting...</div>
+                            <div class="node-details">
+                                Scans <strong>approved variances</strong> in 500m radius
+                            </div>
+                        </div>
+                        <div class="connector" id="connPrecedent">
+                            <div class="data-flow"></div>
+                        </div>
+
+
+                        <div class="branch-row">
+                            <div class="branch-line" id="branchLine"></div>
+                            <div class="workflow-node agent-node" id="node3a">
+                                <div class="node-status"></div>
+                                <div class="node-header">
+                                    <div class="node-icon agent-red">P</div>
+                                    <div>
+                                        <div class="node-title">Pessimist Agent</div>
+                                        <div class="node-subtitle">agent.risk_analysis</div>
+                                    </div>
+                                </div>
+                                <div class="node-content" id="node3aContent">Waiting...</div>
+                                <div class="node-details">
+                                    Identifies <strong>risks</strong>, regulatory hurdles, and worst-case scenarios
+                                </div>
+                            </div>
+                            <div class="workflow-node agent-node" id="node3b">
+                                <div class="node-status"></div>
+                                <div class="node-header">
+                                    <div class="node-icon agent-teal">O</div>
+                                    <div>
+                                        <div class="node-title">Optimist Agent</div>
+                                        <div class="node-subtitle">agent.opportunity</div>
+                                    </div>
+                                </div>
+                                <div class="node-content" id="node3bContent">Waiting...</div>
+                                <div class="node-details">
+                                    Finds <strong>opportunities</strong>, precedents, and variance strategies
+                                </div>
+                            </div>
+                        </div>
+                        <div class="connector" id="conn3">
+                            <div class="data-flow"></div>
+                        </div>
+
+                        <div class="workflow-node" id="node4">
+                            <div class="node-status"></div>
+                            <div class="node-progress"></div>
+                            <div class="node-header">
+                                <div class="node-icon judge">J</div>
+                                <div>
+                                    <div class="node-title">Adjudicator</div>
+                                    <div class="node-subtitle">agent.judge</div>
+                                </div>
+                            </div>
+                            <div class="node-content" id="node4Content">Waiting...</div>
+                            <div class="node-details">
+                                Weighs <strong>risk vs opportunity</strong>, synthesizes final assessment
+                            </div>
+                        </div>
+                        <div class="connector" id="conn4">
+                            <div class="data-flow"></div>
+                        </div>
+
+                        <div class="workflow-node" id="node5">
+                            <div class="node-status"></div>
+                            <div class="node-progress"></div>
+                            <div class="node-header">
+                                <div class="node-icon output">✓</div>
+                                <div>
+                                    <div class="node-title">Feasibility Report</div>
+                                    <div class="node-subtitle">output.report</div>
+                                </div>
+                            </div>
+                            <div class="node-content" id="node5Content">Waiting...</div>
+                            <div class="node-details">
+                                Generates <strong>Zone IQ Score</strong> and actionable recommendations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="sidebar-right">
+                    <span class="section-title">Analysis Results</span>
+                    <div class="waiting-state" id="waitingState">
+                        <div class="waiting-icon">📊</div>
+                        <div class="waiting-text">Initializing pipeline...</div>
+                    </div>
+                    <div id="resultsContainer" style="display: none;">
+                        <!-- Primary Output: Zone IQ Score -->
+                        <div class="score-card">
+                            <div class="score-label">Zone IQ Score</div>
+                            <div class="score-ring">
+                                <svg viewBox="0 0 100 100">
+                                    <circle class="score-bg" cx="50" cy="50" r="42"></circle>
+                                    <circle class="score-progress" cx="50" cy="50" r="42" id="scoreRing"></circle>
+                                </svg>
+                                <div class="score-value" id="scoreValue">0</div>
+                            </div>
+                            <div class="score-breakdown">
+                                <div class="score-factor"><span>Zoning</span><span class="factor-val">72</span></div>
+                                <div class="score-factor"><span>Precedent</span><span class="factor-val">81</span></div>
+                                <div class="score-factor"><span>Potential</span><span class="factor-val">68</span></div>
+                            </div>
+                            <div class="score-desc">Synthesized feasibility across zoning, precedent, and development
+                                potential</div>
+                        </div>
+
+                        <div class="verdict-card">
+                            <div class="verdict-label">Feasibility Verdict</div>
+                            <div class="verdict-value" id="verdictValue">CONDITIONAL</div>
+                            <div class="verdict-sub">Variance application required</div>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-box">
+                                <div class="metric-label">Confidence</div>
+                                <div class="metric-value">94<span class="metric-unit">%</span></div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">Max Units</div>
+                                <div class="metric-value">4</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">Est. Yield</div>
+                                <div class="metric-value">$2.1<span class="metric-unit">M</span></div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">Variance Cost</div>
+                                <div class="metric-value">$22<span class="metric-unit">K</span></div>
+                            </div>
+                        </div>
+                        <div class="recommendation-card">
+                            <div class="rec-header">
+                                <div class="rec-icon">→</div><span class="rec-title">Recommendation</span>
+                            </div>
+                            <div class="rec-text">Proceed with variance application. High precedent density supports
+                                approval.</div>
+                        </div>
+
+                        <!-- PDF Download Button -->
+                        <button class="pdf-btn" onclick="downloadReport()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7,10 12,15 17,10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Download PDF Report</span>
+                        </button>
+
+                        <!-- Comprehensive Report Sections -->
+                        <div class="report-sections">
+                            <!-- Zoning Compliance Assessment -->
+                            <div class="report-section" id="section-zoning">
+                                <div class="section-header" onclick="toggleSection('zoning')">
+                                    <div class="section-header-left">
+                                        <div class="section-icon zoning">Z</div>
+                                        <span class="section-title-text">Zoning Compliance Assessment</span>
+                                    </div>
+                                    <span class="section-toggle">▼</span>
+                                </div>
+                                <div class="section-body">
+                                    <div class="section-content">
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Zone Classification</span>
+                                            <span class="compliance-value">R-C2 (Contextual Low Density)</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Permitted Use</span>
+                                            <span class="compliance-value pass">Multi-Family ✓</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Front Setback</span>
+                                            <span class="compliance-value pass">6.0m / 6.0m min ✓</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Side Setback</span>
+                                            <span class="compliance-value pass">1.2m / 1.2m min ✓</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Rear Setback</span>
+                                            <span class="compliance-value pass">7.5m / 7.5m min ✓</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Height Limit</span>
+                                            <span class="compliance-value pass">10.5m / 11m max ✓</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Lot Coverage</span>
+                                            <span class="compliance-value warn">42% / 45% max</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Frontage</span>
+                                            <span class="compliance-value fail">44ft / 50ft min ✗</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Parking Required</span>
+                                            <span class="compliance-value warn">6 stalls (tandem)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Development Potential Analysis -->
+                            <div class="report-section" id="section-potential">
+                                <div class="section-header" onclick="toggleSection('potential')">
+                                    <div class="section-header-left">
+                                        <div class="section-icon potential">D</div>
+                                        <span class="section-title-text">Development Potential Analysis</span>
+                                    </div>
+                                    <span class="section-toggle">▼</span>
+                                </div>
+                                <div class="section-body">
+                                    <div class="section-content">
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Max Buildable Area</span>
+                                            <span class="compliance-value">4,752 SF (FAR 0.9)</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Unit Count Potential</span>
+                                            <span class="compliance-value">4 units (1,188 SF avg)</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Height Utilization</span>
+                                            <span class="compliance-value">3 storeys / 3 max</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Density Achieved</span>
+                                            <span class="compliance-value">75 units/acre</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Estimated GDV</span>
+                                            <span class="compliance-value">$2,100,000</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Land Value (est.)</span>
+                                            <span class="compliance-value">$580,000</span>
+                                        </div>
+                                        <div class="compliance-row">
+                                            <span class="compliance-label">Residual Value</span>
+                                            <span class="compliance-value pass">$420,000</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Risk Flag Identification -->
+                            <div class="report-section" id="section-risk">
+                                <div class="section-header" onclick="toggleSection('risk')">
+                                    <div class="section-header-left">
+                                        <div class="section-icon risk">!</div>
+                                        <span class="section-title-text">Risk Flag Identification</span>
+                                    </div>
+                                    <span class="section-toggle">▼</span>
+                                </div>
+                                <div class="section-body">
+                                    <div class="section-content">
+                                        <div class="risk-item">
+                                            <span class="risk-severity high">High</span>
+                                            <span class="risk-text"><strong>Frontage deficiency</strong> — 44ft vs 50ft
+                                                minimum. Variance application required with $22K estimated cost.</span>
+                                        </div>
+                                        <div class="risk-item">
+                                            <span class="risk-severity medium">Medium</span>
+                                            <span class="risk-text"><strong>Tandem parking</strong> — 6-stall
+                                                requirement
+                                                may require design modification for tandem configuration.</span>
+                                        </div>
+                                        <div class="risk-item">
+                                            <span class="risk-severity low">Low</span>
+                                            <span class="risk-text"><strong>Lot coverage near limit</strong> — 42% of
+                                                45%
+                                                max leaves minimal buffer for design changes.</span>
+                                        </div>
+                                        <div class="risk-item">
+                                            <span class="risk-severity low">Low</span>
+                                            <span class="risk-text"><strong>Heritage adjacency</strong> — Property
+                                                within
+                                                150m of heritage site may trigger design review.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Precedent Analysis -->
+                            <div class="report-section" id="section-precedent">
+                                <div class="section-header" onclick="toggleSection('precedent')">
+                                    <div class="section-header-left">
+                                        <div class="section-icon precedent">P</div>
+                                        <span class="section-title-text">Precedent Analysis</span>
+                                    </div>
+                                    <span class="section-toggle">▼</span>
+                                </div>
+                                <div class="section-body">
+                                    <div class="section-content">
+                                        <div class="precedent-item">
+                                            <div class="precedent-info">
+                                                <div class="precedent-address">1189 Kensington Road NW</div>
+                                                <div class="precedent-details">R-C2 → 4-unit | Frontage variance (42ft)
+                                                    |
+                                                    2023</div>
+                                            </div>
+                                            <span class="precedent-status">Approved</span>
+                                        </div>
+                                        <div class="precedent-item">
+                                            <div class="precedent-info">
+                                                <div class="precedent-address">1302 Gladstone Road NW</div>
+                                                <div class="precedent-details">R-C2 → 3-unit | Similar lot size | 2022
+                                                </div>
+                                            </div>
+                                            <span class="precedent-status">Approved</span>
+                                        </div>
+                                        <div class="precedent-item">
+                                            <div class="precedent-info">
+                                                <div class="precedent-address">921 Kensington Crescent NW</div>
+                                                <div class="precedent-details">R-C2 → 4-unit | Tandem parking | 2023
+                                                </div>
+                                            </div>
+                                            <span class="precedent-status">Approved</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Go/No-Go Recommendation -->
+                            <div class="report-section" id="section-gonogo">
+                                <div class="section-header" onclick="toggleSection('gonogo')">
+                                    <div class="section-header-left">
+                                        <div class="section-icon gonogo">G</div>
+                                        <span class="section-title-text">Go/No-Go Recommendation</span>
+                                    </div>
+                                    <span class="section-toggle">▼</span>
+                                </div>
+                                <div class="section-body">
+                                    <div class="section-content">
+                                        <div class="gonogo-verdict">
+                                            <div class="gonogo-status">✓ CONDITIONAL GO</div>
+                                            <div class="gonogo-confidence">94% confidence score</div>
+                                        </div>
+                                        <div class="next-steps">
+                                            <div class="next-step-item">File frontage variance application ($22K budget)
+                                            </div>
+                                            <div class="next-step-item">Engage architect for tandem parking design</div>
+                                            <div class="next-step-item">Submit pre-application consultation request
+                                            </div>
+                                            <div class="next-step-item">Complete heritage adjacency assessment</div>
+                                            <div class="next-step-item">Timeline estimate: 8-12 months to permit</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-left">
+                <div class="footer-stat"><span class="footer-stat-label">Execution:</span><span
+                        class="footer-stat-value" id="execTime">—</span></div>
+                <div class="footer-stat"><span class="footer-stat-label">Tokens:</span><span class="footer-stat-value"
+                        id="tokenCount">—</span></div>
+                <div class="footer-stat"><span class="footer-stat-label">Cycle:</span><span class="footer-stat-value"
+                        id="cycleCount">1</span></div>
+            </div>
+            <div class="footer-right">ZONE IQ™ • v0.9.3</div>
+        </footer>
+    </div>
+
+    <script>
+        let startTime, cycleNum = 0;
+
+        function addLog(msg, type = 'info') {
+            const log = document.getElementById('pipelineLog');
+            const time = ((Date.now() - startTime) / 1000).toFixed(2);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-time">${time}s</span><span class="log-message ${type}">${msg}</span>`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function setActive(id) { document.getElementById(id).classList.add('active'); }
+        function setCompleted(id) { const n = document.getElementById(id); n.classList.remove('active'); n.classList.add('completed'); }
+        function setConnActive(id) { document.getElementById(id).classList.add('active'); }
+        function updateContent(id, text) { document.getElementById(id).innerHTML = text; }
+
+        function typeText(id, text, cb) {
+            const el = document.getElementById(id);
+            el.classList.add('typing'); el.innerHTML = '';
+            let i = 0;
+            const iv = setInterval(() => {
+                if (i < text.length) { el.innerHTML = text.substring(0, ++i); }
+                else { clearInterval(iv); el.classList.remove('typing'); if (cb) cb(); }
+            }, 25);
+        }
+
+        function showTab(tabName) {
+            // Hide all panels
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            // Show selected
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function downloadReport() {
+            // Simulate PDF download
+            const btn = event.target.closest('.pdf-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span>Generating PDF...</span>';
+            btn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                btn.innerHTML = '<span> Report Downloaded</span>';
+                btn.style.background = 'linear-gradient(135deg, #00c853, #00e676)';
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                    btn.style.opacity = '';
+                }, 2000);
+            }, 1500);
+        }
+
+        function animateScore(targetScore) {
+            const scoreVal = document.getElementById('scoreValue');
+            const scoreRing = document.getElementById('scoreRing');
+            const circumference = 264; // 2 * PI * 42
+            const offset = circumference - (targetScore / 100) * circumference;
+
+            // Animate ring
+            scoreRing.style.strokeDashoffset = offset;
+
+            // Animate number
+            let current = 0;
+            const increment = targetScore / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetScore) {
+                    scoreVal.textContent = targetScore;
+                    clearInterval(timer);
+                } else {
+                    scoreVal.textContent = Math.round(current);
+                }
+            }, 50);
+        }
+
+        function toggleSection(sectionName) {
+            const section = document.getElementById('section-' + sectionName);
+            section.classList.toggle('expanded');
+        }
+
+        async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function resetAll() {
+            ['node1', 'node2', 'nodePrecedent', 'node3a', 'node3b', 'node4', 'node5'].forEach(id => {
+                document.getElementById(id).classList.remove('active', 'completed');
+            });
+            ['conn1', 'conn2', 'connPrecedent', 'conn3', 'conn4', 'branchLine'].forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+            ['node1Content', 'node2Content', 'nodePrecedentContent', 'node3aContent', 'node3bContent', 'node4Content', 'node5Content'].forEach(id => {
+                document.getElementById(id).innerHTML = 'Waiting...';
+            });
+            // Collapse all report sections
+            document.querySelectorAll('.report-section').forEach(s => s.classList.remove('expanded'));
+            document.getElementById('pipelineLog').innerHTML = '';
+            document.getElementById('waitingState').style.display = 'block';
+            document.getElementById('scoreValue').textContent = '0';
+            document.getElementById('scoreRing').style.strokeDashoffset = '264';
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('execTime').textContent = '—';
+            document.getElementById('tokenCount').textContent = '—';
+        }
+
+        async function runPipeline() {
+            cycleNum++;
+            document.getElementById('cycleCount').textContent = cycleNum;
+            resetAll();
+            startTime = Date.now();
+
+            const badge = document.getElementById('statusBadge');
+            const status = document.getElementById('statusText');
+            badge.classList.add('processing');
+            status.textContent = 'PROCESSING';
+
+            addLog('Pipeline started', 'processing');
+
+            // Step 1
+            await sleep(400);
+            setActive('node1');
+            addLog('Loading parcel data...', 'info');
+            await sleep(600);
+            typeText('node1Content', 'Loading <code>GIS parcel</code>...', async () => {
+                await sleep(400);
+                updateContent('node1Content', 'Loaded <code>044-12-789</code>');
+                setCompleted('node1');
+                addLog('Parcel loaded', 'success');
+                setConnActive('conn1');
+
+                // Step 2
+                await sleep(300);
+                setActive('node2');
+                addLog('Querying R-C2 bylaws...', 'info');
+                await sleep(500);
+                typeText('node2Content', 'Retrieving bylaws...', async () => {
+                    await sleep(400);
+                    updateContent('node2Content', 'Retrieved <code>12 sections</code>');
+                    setCompleted('node2');
+                    addLog('Bylaws retrieved', 'success');
+                    setConnActive('conn2');
+
+                    // Step 2.5 - Precedent Analysis
+                    await sleep(300);
+                    setActive('nodePrecedent');
+                    addLog('Analyzing precedents...', 'info');
+                    await sleep(500);
+                    typeText('nodePrecedentContent', 'Scanning approvals...', async () => {
+                        await sleep(400);
+                        updateContent('nodePrecedentContent', 'Found <code>3 matches</code>');
+                        setCompleted('nodePrecedent');
+                        addLog('Precedents matched', 'success');
+                        setConnActive('connPrecedent');
+                        document.getElementById('branchLine').classList.add('active');
+
+                        // Step 3 - Agents
+                        await sleep(300);
+                        setActive('node3a');
+                        setActive('node3b');
+                        addLog('Dispatching agents...', 'processing');
+
+                        setTimeout(() => typeText('node3aContent', 'Analyzing risks...', () => {
+                            setTimeout(() => { updateContent('node3aContent', '<code>2 risks</code>'); setCompleted('node3a'); addLog('Pessimist: 2 risks', 'info'); }, 400);
+                        }), 100);
+
+                        setTimeout(() => typeText('node3bContent', 'Finding opportunities...', () => {
+                            setTimeout(() => { updateContent('node3bContent', '<code>3 opps</code>'); setCompleted('node3b'); addLog('Optimist: 3 opportunities', 'info'); }, 500);
+                        }), 200);
+
+                        await sleep(1600);
+                        setConnActive('conn3');
+
+                        // Step 4 - Judge
+                        await sleep(300);
+                        setActive('node4');
+                        addLog('Adjudicating...', 'processing');
+                        await sleep(400);
+                        typeText('node4Content', 'Weighing arguments...', async () => {
+                            await sleep(500);
+                            updateContent('node4Content', 'Verdict: <code>94%</code>');
+                            setCompleted('node4');
+                            addLog('Verdict rendered', 'success');
+                            setConnActive('conn4');
+
+                            // Step 5 - Output
+                            await sleep(300);
+                            setActive('node5');
+                            addLog('Generating report...', 'processing');
+                            await sleep(400);
+                            typeText('node5Content', 'Compiling...', async () => {
+                                await sleep(300);
+                                updateContent('node5Content', '<code>CONDITIONAL</code>');
+                                setCompleted('node5');
+                                addLog('Complete!', 'success');
+
+                                // Show results
+                                document.getElementById('waitingState').style.display = 'none';
+                                // Animate Zone IQ Score
+                                animateScore(74);
+
+                                document.getElementById('resultsContainer').style.display = 'block';
+                                document.getElementById('execTime').textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+                                document.getElementById('tokenCount').textContent = '12,847';
+
+                                badge.classList.remove('processing');
+                                status.textContent = 'COMPLETE';
+
+                                // Wait then restart
+                                await sleep(3000);
+                                runPipeline();
+                            });
+                        });
+                    });
+                });
+            });
+        }
+
+        // Auto-start on load
+        window.addEventListener('load', () => {
+            setTimeout(runPipeline, 500);
+        });
+    </script>
+</body>
+
+</html>

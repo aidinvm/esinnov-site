@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZONE IQ™ | Feasibility Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: rgba(15, 23, 42, 0.95);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-teal: #2dd4bf;
+            --accent-teal-dim: rgba(45, 212, 191, 0.1);
+            --accent-red: #f87171;
+            --accent-green: #4ade80;
+            --border: rgba(148, 163, 184, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            color: var(--accent-teal);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .header p span {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        /* SCENARIO TABS */
+        .scenario-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 0.8s ease 0.1s both;
+        }
+
+        .scenario-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scenario-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-teal);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .scenario-tab:hover {
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+        }
+
+        .scenario-tab.active {
+            background: var(--accent-teal-dim);
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+        }
+
+        .scenario-tab.active::after {
+            transform: scaleX(1);
+        }
+
+        /* Progress bar for auto-cycle */
+        .tab-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent-teal);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .scenario-tab.active .tab-progress {
+            animation: progressFill 6s linear forwards;
+        }
+
+        @keyframes progressFill {
+            from {
+                width: 0%;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        /* MAIN CONTAINER */
+        .demo-container {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* MAP */
+        #propertyMap {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            transition: filter 0.7s ease;
+        }
+
+        .demo-container.scanned #propertyMap {
+            filter: brightness(0.3) saturate(0.5);
+        }
+
+        /* BLIND SPOT STATE (Default) */
+        .blind-spot-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        .demo-container.scanned .blind-spot-overlay {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        .blind-spot-card {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            padding: 2rem 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(45, 212, 191, 0.2);
+            }
+        }
+
+        .blind-spot-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .blind-spot-meta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .scan-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #0d9488, #14b8a6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                left: 100%;
+            }
+        }
+
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(45, 212, 191, 0.4);
+        }
+
+        /* SCANNED STATE */
+        .scanned-overlay {
+            position: absolute;
+            inset: 0;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease 0.1s;
+        }
+
+        .demo-container.scanned .scanned-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Scan Lines Effect */
+        .scan-lines {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(45, 212, 191, 0.03) 2px,
+                    rgba(45, 212, 191, 0.03) 4px);
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .demo-container.scanned .scan-lines {
+            opacity: 1;
+        }
+
+        /* Grid Overlay */
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(45, 212, 191, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(45, 212, 191, 0.1) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 6;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.2s;
+        }
+
+        .demo-container.scanned .grid-overlay {
+            opacity: 1;
+        }
+
+        /* Massing Box */
+        .massing-box {
+            position: absolute;
+            top: 18%;
+            left: 22%;
+            width: 56%;
+            height: 50%;
+            border: 2px solid var(--accent-teal);
+            background: rgba(45, 212, 191, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 7;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease 0.3s;
+        }
+
+        .demo-container.scanned .massing-box {
+            opacity: 1;
+            transform: scale(1);
+            box-shadow: 0 0 60px rgba(45, 212, 191, 0.3), inset 0 0 30px rgba(45, 212, 191, 0.1);
+        }
+
+        .massing-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-teal);
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent-teal);
+        }
+
+        /* Agent Cards */
+        .agent-cards {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            z-index: 20;
+        }
+
+        .agent-card {
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(12px);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            max-width: 300px;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .demo-container.scanned .agent-card {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .demo-container.scanned .agent-card.optimist {
+            transition-delay: 0.4s;
+        }
+
+        .demo-container.scanned .agent-card.pessimist {
+            transition-delay: 0.5s;
+        }
+
+        .agent-card.optimist {
+            border: 1px solid rgba(45, 212, 191, 0.5);
+            box-shadow: 0 0 20px rgba(45, 212, 191, 0.1);
+        }
+
+        .agent-card.pessimist {
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            box-shadow: 0 0 20px rgba(248, 113, 113, 0.1);
+        }
+
+        .agent-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.35rem;
+        }
+
+        .optimist .agent-label {
+            color: var(--accent-teal);
+        }
+
+        .pessimist .agent-label {
+            color: var(--accent-red);
+        }
+
+        .agent-finding {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Verdict Bar */
+        .verdict-bar {
+            background: rgba(15, 23, 42, 0.98);
+            border-top: 3px solid var(--accent-teal);
+            border-radius: 14px;
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            z-index: 20;
+            max-width: 850px;
+            margin: 0 auto;
+            box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(45, 212, 191, 0.1);
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.5s ease 0.6s;
+        }
+
+        .demo-container.scanned .verdict-bar {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .verdict-item {
+            text-align: left;
+        }
+
+        .verdict-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .verdict-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .verdict-value.score span {
+            color: var(--accent-teal);
+        }
+
+        .verdict-value.use {
+            color: var(--accent-teal);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .verdict-value.lift {
+            color: var(--accent-green);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .divider {
+            width: 1px;
+            height: 45px;
+            background: var(--border);
+        }
+
+        .next-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d9488, #14b8a6);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .next-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 4px 25px rgba(45, 212, 191, 0.5);
+        }
+
+        /* Footer hint */
+        .footer-hint {
+            text-align: center;
+            margin-top: 1.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .auto-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 1rem;
+            color: var(--accent-teal);
+        }
+
+        .auto-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Location Pin Animation */
+        .location-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            z-index: 8;
+        }
+
+        .location-pulse::before,
+        .location-pulse::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid var(--accent-teal);
+            border-radius: 50%;
+            animation: pingPulse 2s infinite;
+        }
+
+        .location-pulse::after {
+            animation-delay: 1s;
+        }
+
+        @keyframes pingPulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* Pipeline Analysis Panel */
+        .pipeline-panel {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%) translateX(20px);
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 220px;
+            z-index: 20;
+            opacity: 0;
+            transition: all 0.5s ease 0.5s;
+        }
+
+        .demo-container.scanned .pipeline-panel {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .pipeline-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pipeline-icon {
+            font-size: 1rem;
+        }
+
+        .pipeline-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--accent-teal);
+            letter-spacing: 1px;
+        }
+
+        .pipeline-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            opacity: 0;
+            transform: translateX(10px);
+            animation: stepReveal 0.3s ease forwards;
+        }
+
+        .demo-container.scanned .pipeline-step:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        .demo-container.scanned .pipeline-step:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .demo-container.scanned .pipeline-step:nth-child(3) {
+            animation-delay: 1.0s;
+        }
+
+        .demo-container.scanned .pipeline-step:nth-child(4) {
+            animation-delay: 1.2s;
+        }
+
+        @keyframes stepReveal {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--accent-teal-dim);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-teal);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.1rem;
+        }
+
+        .step-result {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        .step-status {
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .step-status.pass {
+            color: var(--accent-green);
+        }
+
+        .step-status.warn {
+            color: #f59e0b;
+        }
+
+        /* Map Zoom Animation */
+        #propertyMap {
+            transition: transform 1s ease;
+        }
+
+        .demo-container.scanned #propertyMap {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div
+            style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+            <span style="color: var(--accent-teal);">ZONE</span><span style="color: white;"> IQ</span><span
+                style="color: var(--accent-teal); font-size: 0.8rem;">™</span>
+        </div>
+        <h2>// FEASIBILITY INTELLIGENCE</h2>
+        <p>Don't see a house. See the <span>Yield</span>.</p>
+    </header>
+
+    <!-- SCENARIO TABS -->
+    <div class="scenario-tabs">
+        <button class="scenario-tab active" data-scenario="calgary" onclick="setScenario('calgary', true)">
+            CALGARY R-C2
+            <div class="tab-progress"></div>
+        </button>
+        <button class="scenario-tab" data-scenario="vancouver" onclick="setScenario('vancouver', true)">
+            VANCOUVER BILL 44
+            <div class="tab-progress"></div>
+        </button>
+        <button class="scenario-tab" data-scenario="heritage" onclick="setScenario('heritage', true)">
+            HERITAGE SITE
+            <div class="tab-progress"></div>
+        </button>
+    </div>
+
+    <!-- MAIN DEMO -->
+    <div class="demo-container" id="demoContainer" onclick="toggleScan()">
+        <!-- Map -->
+        <div id="propertyMap"></div>
+
+        <!-- Scan Effects -->
+        <div class="scan-lines"></div>
+        <div class="grid-overlay"></div>
+        <div class="location-pulse"></div>
+
+        <!-- BLIND SPOT (Default State) -->
+        <div class="blind-spot-overlay">
+            <div class="blind-spot-card">
+                <h3 id="propertyAddress">1247 Kensington Road NW</h3>
+                <div class="blind-spot-meta">
+                    <span>LIST: <strong id="listPrice">$790,000</strong></span>
+                    <span>|</span>
+                    <span>ZONING: <strong id="zoning">R-C2</strong></span>
+                </div>
+                <button class="scan-btn" onclick="event.stopPropagation(); toggleScan();">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    RUN ZONE IQ™ ANALYSIS
+                </button>
+            </div>
+        </div>
+
+        <!-- Massing Box -->
+        <div class="massing-box">
+            <span class="massing-label" id="massingLabel">MASSING ENVELOPE: 3,200 SQFT</span>
+        </div>
+
+        <!-- SCANNED STATE -->
+        <div class="scanned-overlay">
+            <!-- Agent Cards -->
+            <div class="agent-cards">
+                <div class="agent-card optimist">
+                    <div class="agent-label">CATALYST AGENT FOUND:</div>
+                    <div class="agent-finding" id="optimistFinding">MISSING MIDDLE UPZONING</div>
+                    <div class="agent-detail" id="optimistDetail">Bill 44 Eligibility Confirmed</div>
+                </div>
+                <div class="agent-card pessimist">
+                    <div class="agent-label">SENTINEL AGENT FLAGGED:</div>
+                    <div class="agent-finding" id="pessimistFinding">FRONTAGE SHORTFALL (6ft)</div>
+                    <div class="agent-detail" id="pessimistDetail">Requires Variance Application</div>
+                </div>
+            </div>
+
+            <!-- Pipeline Analysis Panel -->
+            <div class="pipeline-panel">
+                <div class="pipeline-header">
+                    <span class="pipeline-icon">⚡</span>
+                    <span class="pipeline-title">ANALYSIS PIPELINE</span>
+                </div>
+                <div class="pipeline-steps">
+                    <div class="pipeline-step">
+                        <div class="step-marker">Σ</div>
+                        <div class="step-content">
+                            <div class="step-name">Spatial Analysis</div>
+                            <div class="step-result" id="spatialResult">Lot: 5,280 SF • FAR: 0.75</div>
+                        </div>
+                        <div class="step-status pass">✓</div>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-marker">λ</div>
+                        <div class="step-content">
+                            <div class="step-name">Regulatory Scan</div>
+                            <div class="step-result" id="regulatoryResult">R-C2 multi-family permitted</div>
+                        </div>
+                        <div class="step-status pass">✓</div>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-marker">Θ</div>
+                        <div class="step-content">
+                            <div class="step-name">Precedent Match</div>
+                            <div class="step-result" id="precedentResult">12 similar approvals (94%)</div>
+                        </div>
+                        <div class="step-status pass">✓</div>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="step-marker">Δ</div>
+                        <div class="step-content">
+                            <div class="step-name">Financial Model</div>
+                            <div class="step-result" id="financialResult">ROI: 38% • Cap Rate: 5.2%</div>
+                        </div>
+                        <div class="step-status pass">✓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verdict Bar -->
+            <div class="verdict-bar">
+                <div class="verdict-item">
+                    <div class="verdict-label">Feasibility Score</div>
+                    <div class="verdict-value score" id="scoreValue">74<span>/100</span></div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="verdict-item">
+                    <div class="verdict-label">Highest & Best Use</div>
+                    <div class="verdict-value use" id="useValue">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        4-UNIT TOWNHOME
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="verdict-item">
+                    <div class="verdict-label">Projected Lift</div>
+                    <div class="verdict-value lift" id="liftValue">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        +$300,000
+                    </div>
+                </div>
+
+                <button class="next-btn" onclick="event.stopPropagation(); nextScenario();">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-hint">
+        CLICK TO TOGGLE ANALYSIS
+        <span class="auto-indicator">
+            <span class="auto-dot"></span>
+            AUTO-CYCLING
+        </span>
+    </div>
+
+    <script>
+        const scenarios = {
+            calgary: {
+                address: '1247 Kensington Road NW',
+                listPrice: '$749,000',
+                zoning: 'R-C2',
+                score: 74,
+                use: '4-UNIT ROWHOUSE',
+                lift: '+$265,000',
+                massing: 'MASSING ENVELOPE: 3,200 SQFT',
+                catalyst: { finding: 'R-C2 BLANKET REZONING', detail: 'Calgary Multi-Res Eligible' },
+                sentinel: { finding: 'FRONTAGE SHORTFALL (6ft)', detail: 'Requires Variance Application' },
+                coords: { lat: 51.0523803, lng: -114.0914042 },
+                pipeline: {
+                    spatial: 'Lot: 5,280 SF • FAR: 0.75',
+                    regulatory: 'R-C2 rowhouse permitted',
+                    precedent: '12 similar approvals (94%)',
+                    financial: 'ROI: 35% • Cap Rate: 5.2%'
+                }
+            },
+            vancouver: {
+                address: '1842 Oak Street',
+                listPrice: '$1,949,000',
+                zoning: 'RS-1',
+                score: 89,
+                use: '6-PLEX DEVELOPMENT',
+                lift: '+$820,000',
+                massing: 'MASSING ENVELOPE: 5,400 SQFT',
+                catalyst: { finding: 'BILL 44 DENSITY BONUS', detail: 'BC Small-Scale Multi-Unit' },
+                sentinel: { finding: 'SHADOW STUDY NEEDED', detail: 'Minor Design Adjustment' },
+                coords: { lat: 49.2634, lng: -123.1384 },
+                pipeline: {
+                    spatial: 'Lot: 4,200 SF • FAR: 1.2',
+                    regulatory: 'Bill 44 6-plex permitted',
+                    precedent: '28 similar approvals (97%)',
+                    financial: 'ROI: 42% • Cap Rate: 4.6%'
+                }
+            },
+            heritage: {
+                address: '516 Simcoe Street',
+                listPrice: '$979,000',
+                zoning: 'R1-B',
+                score: 58,
+                use: '3-UNIT HERITAGE INFILL',
+                lift: '+$175,000',
+                massing: 'MASSING ENVELOPE: 2,400 SQFT',
+                catalyst: { finding: 'CARRIAGE HOUSE ELIGIBLE', detail: 'Victoria Heritage Bonus' },
+                sentinel: { finding: 'HERITAGE OVERLAY', detail: 'Design Review + 6mo Delay' },
+                coords: { lat: 48.4234, lng: -123.3656 },
+                pipeline: {
+                    spatial: 'Lot: 3,800 SF • FAR: 0.85',
+                    regulatory: 'Heritage design guidelines',
+                    precedent: '8 similar approvals (72%)',
+                    financial: 'ROI: 18% • Cap Rate: 5.3%'
+                }
+            }
+        };
+
+        const scenarioOrder = ['calgary', 'vancouver', 'heritage'];
+        let currentScenario = 'calgary';
+        let map = null;
+        let marker = null;
+        let autoTimer = null;
+        let isScanned = false;
+
+        // Initialize map
+        function initMap() {
+            const s = scenarios[currentScenario];
+
+            if (map) {
+                map.remove();
+            }
+
+            map = L.map('propertyMap', {
+                zoomControl: false,
+                attributionControl: false,
+                dragging: false,
+                scrollWheelZoom: false
+            }).setView([s.coords.lat, s.coords.lng], 17);
+
+            // Google Maps tiles
+            L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                maxZoom: 20
+            }).addTo(map);
+
+            // Custom marker
+            const markerIcon = L.divIcon({
+                className: 'custom-marker',
+                html: '<div style="width: 16px; height: 16px; background: #2dd4bf; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px rgba(45, 212, 191, 0.8);"></div>',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            marker = L.marker([s.coords.lat, s.coords.lng], { icon: markerIcon }).addTo(map);
+
+            // Start subtle pan animation
+            startMapPan();
+        }
+
+        // Subtle map pan effect
+        let panInterval = null;
+        function startMapPan() {
+            if (panInterval) clearInterval(panInterval);
+            let panStep = 0;
+            panInterval = setInterval(() => {
+                if (map && !isScanned) {
+                    const s = scenarios[currentScenario];
+                    const offset = Math.sin(panStep * 0.02) * 0.0003;
+                    map.panTo([s.coords.lat + offset, s.coords.lng + offset * 0.5], { animate: true, duration: 0.5 });
+                    panStep++;
+                }
+            }, 1500);
+        }
+
+        function toggleScan() {
+            isScanned = !isScanned;
+            document.getElementById('demoContainer').classList.toggle('scanned', isScanned);
+
+            // Reset auto timer when user interacts
+            resetAutoTimer();
+        }
+
+        function setScenario(key, userTriggered = false) {
+            currentScenario = key;
+            const s = scenarios[key];
+
+            // Reset scan state
+            isScanned = false;
+            document.getElementById('demoContainer').classList.remove('scanned');
+
+            // Update tabs
+            document.querySelectorAll('.scenario-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.scenario === key);
+            });
+
+            // Update content with fade effect
+            const card = document.querySelector('.blind-spot-card');
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                document.getElementById('propertyAddress').textContent = s.address;
+                document.getElementById('listPrice').textContent = s.listPrice;
+                document.getElementById('zoning').textContent = s.zoning;
+                document.getElementById('scoreValue').innerHTML = s.score + '<span>/100</span>';
+                document.getElementById('useValue').innerHTML = `
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    ${s.use}
+                `;
+                document.getElementById('liftValue').innerHTML = `
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    ${s.lift}
+                `;
+                document.getElementById('massingLabel').textContent = s.massing;
+                document.getElementById('optimistFinding').textContent = s.catalyst.finding;
+                document.getElementById('optimistDetail').textContent = s.catalyst.detail;
+                document.getElementById('pessimistFinding').textContent = s.sentinel.finding;
+                document.getElementById('pessimistDetail').textContent = s.sentinel.detail;
+
+                // Update pipeline data
+                if (s.pipeline) {
+                    document.getElementById('spatialResult').textContent = s.pipeline.spatial;
+                    document.getElementById('regulatoryResult').textContent = s.pipeline.regulatory;
+                    document.getElementById('precedentResult').textContent = s.pipeline.precedent;
+                    document.getElementById('financialResult').textContent = s.pipeline.financial;
+                }
+
+                // Update map
+                initMap();
+
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+            }, 200);
+
+            if (userTriggered) {
+                resetAutoTimer();
+            }
+        }
+
+        function nextScenario() {
+            const currentIndex = scenarioOrder.indexOf(currentScenario);
+            const nextIndex = (currentIndex + 1) % scenarioOrder.length;
+            setScenario(scenarioOrder[nextIndex], true);
+        }
+
+        // Auto-cycle functionality
+        function startAutoCycle() {
+            autoTimer = setInterval(() => {
+                // First show scan for 3s, then move to next
+                if (!isScanned) {
+                    toggleScan();
+                    setTimeout(() => {
+                        nextScenario();
+                    }, 3000);
+                }
+            }, 6000);
+        }
+
+        function resetAutoTimer() {
+            clearInterval(autoTimer);
+            startAutoCycle();
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initMap();
+            startAutoCycle();
+        });
+    </script>
+</body>
+
+</html>
