@@ -58,9 +58,9 @@ export default function Navbar() {
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.4 }}
-                className="fixed top-0 left-0 right-0 z-50 bg-bg-primary/95 backdrop-blur-lg border-b border-glass-border"
+                className="fixed top-0 left-0 right-0 z-50 bg-bg-primary/95 backdrop-blur-lg border-b border-glass-border w-full overflow-hidden"
             >
-                <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3 z-50">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
