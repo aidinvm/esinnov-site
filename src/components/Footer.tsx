@@ -7,11 +7,11 @@ export default function Footer() {
 
     return (
         <footer className="border-t border-glass-border bg-bg-primary">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Main Footer */}
-                <div className="py-10 grid md:grid-cols-4 gap-10">
+                <div className="py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {/* Brand */}
-                    <div className="md:col-span-2">
+                    <div className="sm:col-span-2 lg:col-span-2">
                         <div className="flex items-center gap-3 mb-3">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
