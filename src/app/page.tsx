@@ -122,8 +122,8 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 2.5 }}
             >
-              We architect <strong className="text-text-primary">Agentic RAG systems</strong> with
-              MCP and A2A protocol integration. Human-verified outputs for high-stakes decisions.
+              We turn paperwork bottlenecks into 48-hour turnarounds. AI systems that read,
+              analyze, and verify, so you can decide faster.
             </motion.p>
 
             {/* CTAs */}
