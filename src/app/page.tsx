@@ -428,10 +428,10 @@ export default function HomePage() {
               viewport={{ once: true }}
               className="text-center mb-10"
             >
-              <div className="font-section mb-4 !text-accent-blue">The Studio</div>
+              <div className="font-section mb-4 !text-accent-blue">About ESInnov</div>
               <h2 className="font-heading text-headline !text-white">
-                Protocol-Level Expertise.<br />
-                Outcome-Focused Delivery.
+                AI That Works.<br />
+                Results You Can Measure.
               </h2>
             </motion.div>
 
@@ -444,15 +444,29 @@ export default function HomePage() {
             >
               <div className="space-y-5 text-muted text-body-lg leading-relaxed">
                 <p>
-                  ESInnov is an <strong className="text-white">Applied Intelligence Studio</strong> architecting
-                  Sovereign Multi-Agent Systems for high-friction enterprise environments.
+                  ESInnov builds <strong className="text-white">practical AI systems</strong> that automate
+                  complex, time consuming work in your business. We take what's possible with modern AI and
+                  turn it into tools you can actually use, today.
                 </p>
                 <p>
-                  We bridge the gap between <strong className="text-white">Theoretical R&D</strong> and{" "}
-                  <strong className="text-white">Industrial Reality</strong>. Our mandate is absolute:
-                  Deploy production-ready protocols (MCP, A2A) that deliver deterministic outcomes,
-                  backed by Human-in-the-Loop verification pipelines.
+                  We focus on what matters to you: <strong className="text-white">saving time</strong>,
+                  <strong className="text-white"> reducing costs</strong>, and
+                  <strong className="text-white"> getting more done</strong> with fewer resources.
                 </p>
+                <div className="pt-4 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-accent-emerald mt-2 flex-shrink-0" />
+                    <span>We deploy systems that are <strong className="text-white">proven and production ready</strong>, not experiments</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-accent-emerald mt-2 flex-shrink-0" />
+                    <span>We measure success by <strong className="text-white">real outcomes</strong>: hours saved, errors reduced, decisions accelerated</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-accent-emerald mt-2 flex-shrink-0" />
+                    <span>Your team stays in control with <strong className="text-white">human review</strong> on every critical decision</span>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
