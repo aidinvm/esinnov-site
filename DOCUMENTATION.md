@@ -157,6 +157,7 @@ Site footer with navigation links, service links, and copyright.
 1. **Hero Section**
    - Animated scramble title
    - Tagline: "Agentic Intelligence Studio"
+   - Sub-hero: "We turn paperwork bottlenecks into 48-hour turnarounds. AI systems that read, analyze, and verify, so you can decide faster."
    - CTAs: "Explore Architecture", "Request Feasibility Study"
    - Background: Agentic stack wireframe visual
 
