@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 
 const navLinks = [
     { href: "/protocols", label: "Architecture" },
@@ -12,23 +12,23 @@ const navLinks = [
 ];
 
 // Hamburger icon animation variants
-const topLine = {
+const topLine: Variants = {
     closed: { rotate: 0, y: 0 },
     open: { rotate: 45, y: 6 }
 };
 
-const middleLine = {
+const middleLine: Variants = {
     closed: { opacity: 1, x: 0 },
     open: { opacity: 0, x: -20 }
 };
 
-const bottomLine = {
+const bottomLine: Variants = {
     closed: { rotate: 0, y: 0 },
     open: { rotate: -45, y: -6 }
 };
 
 // Menu animation variants
-const menuVariants = {
+const menuVariants: Variants = {
     closed: {
         opacity: 0,
         transition: { duration: 0.3, ease: "easeInOut" }
@@ -39,7 +39,7 @@ const menuVariants = {
     }
 };
 
-const linkVariants = {
+const linkVariants: Variants = {
     closed: { opacity: 0, y: 20 },
     open: (i: number) => ({
         opacity: 1,
@@ -47,6 +47,7 @@ const linkVariants = {
         transition: { delay: 0.1 + i * 0.1, duration: 0.4, ease: "easeOut" }
     })
 };
+
 
 export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
