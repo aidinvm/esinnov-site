@@ -55,36 +55,36 @@ const integrations = [
 // FAQ
 const faqs = [
   {
-    q: "What is Model Context Protocol (MCP)?",
-    a: "MCP is Anthropic's open standard for AI context management. It allows large language models to interact with external tools, data sources, and systems through a single, standardized interface. This eliminates the need for custom integrations and dramatically reduces context switching."
+    q: "What exactly do you automate?",
+    a: "We automate the repetitive, time consuming work that slows down your operations. Document review, data extraction, compliance checks, report generation, and multi step approval workflows. If it involves reading, analyzing, and making routine decisions, we can likely automate it."
   },
   {
-    q: "How is Agentic RAG different from standard RAG?",
-    a: "Standard RAG follows a fixed, linear process. Agentic RAG, on the other hand, introduces autonomous decision making at every stage. Agents decide what to index, how to retrieve information, and validate their own outputs through built in critic loops."
+    q: "How quickly will I see results?",
+    a: "You'll see a working prototype within 14 days. Most clients experience immediate time savings once we deploy, often reducing hours of manual work down to minutes. We measure success by tangible outcomes, not technical milestones."
   },
   {
-    q: "Is my data secure?",
-    a: "Absolutely. We operate on a Sovereign Node model, which means your knowledge graph runs on completely isolated infrastructure. We never use your data to train public models, and you retain full ownership at all times."
+    q: "Is my company data safe?",
+    a: "Completely. Your data stays on isolated infrastructure that we set up specifically for you. We never mix client data, never use it to train AI models, and you retain full ownership. We can also deploy within your own cloud environment if required."
   },
   {
-    q: "What is A2A Protocol?",
-    a: "A2A, or Agent to Agent, is Google's open protocol for agent interoperability. It enables our systems to communicate seamlessly with other enterprise agents, regardless of the underlying framework or vendor."
+    q: "What's the investment?",
+    a: "Feasibility studies start at $1,500 and are delivered in 48 hours. Pilot projects are quoted based on scope. Most clients see ROI within the first month of deployment through reduced labor costs and faster turnaround times."
   },
   {
-    q: "How long does a typical engagement take?",
-    a: "It depends on the scope. Feasibility studies are delivered within 48 hours. Agent pilots run for 14 days with full monitoring included. Production deployments typically take around 4 weeks, depending on complexity."
+    q: "Do I need a technical team to work with you?",
+    a: "Not at all. We handle all the technical implementation. You just need someone who understands your current workflows and can tell us what's working and what's not. We translate business problems into working solutions."
   },
   {
-    q: "What's included in the Feasibility Study?",
-    a: "You'll receive a comprehensive analysis of your use case, architecture recommendations, MCP and A2A integration mapping, a cost estimation, and a clear go or no go recommendation with actionable next steps."
-  },
-  {
-    q: "Do you provide ongoing support?",
-    a: "Yes, we do. Production deployments include monitoring, maintenance, and dedicated support. We also offer retainer arrangements for organizations that want continuous optimization and ongoing agent development."
+    q: "What happens if the AI makes a mistake?",
+    a: "Every critical decision includes human review before final action. We design systems with validation checkpoints so your team stays in control. You approve, the AI executes. No surprises, no autonomous decisions on high stakes items."
   },
   {
     q: "What industries do you work with?",
-    a: "We specialize in real estate, manufacturing, and operations heavy industries. Our systems work particularly well for organizations dealing with high volume document processing, compliance workflows, and complex, multi stakeholder decision making."
+    a: "We specialize in real estate, manufacturing, and professional services. Any industry dealing with high volume paperwork, compliance requirements, or complex approval chains is a strong fit for what we build."
+  },
+  {
+    q: "How do I get started?",
+    a: "Start with a Feasibility Study. We'll analyze your use case, identify automation opportunities, and give you a clear recommendation within 48 hours. No commitment beyond that. If it makes sense to proceed, we'll scope a pilot together."
   },
 ];
 
