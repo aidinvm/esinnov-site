@@ -11,6 +11,7 @@ const navLinks = [
   { href: "#engagement-model", label: "Engagement Model", index: "03" },
   { href: "#sector-pedigree", label: "Sector Pedigree", index: "04" },
   { href: "#about-governance", label: "About & Governance", index: "05" },
+  { href: "#contact", label: "Contact", index: "06" },
 ];
 
 export default function Navbar() {
@@ -46,6 +47,23 @@ export default function Navbar() {
         target.scrollIntoView({ behavior: "smooth" });
       }
       window.history.pushState(null, "", href);
+    }, 50);
+  };
+
+  const handleInitiateMandate = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent("esinnov:initiate-mandate", {
+          detail: { service: "mandate-discussion" },
+        })
+      );
+      const target = document.getElementById("contact");
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+      window.history.pushState(null, "", "#contact");
     }, 50);
   };
 
@@ -104,7 +122,7 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <nav
             aria-label="Primary navigation"
-            className="hidden lg:flex items-center gap-5 xl:gap-7"
+            className="hidden lg:flex items-center gap-4 xl:gap-6"
           >
             {navLinks.map((link) => (
               <a
@@ -121,7 +139,8 @@ export default function Navbar() {
           {/* Desktop / Tablet Primary CTA & Drawer Trigger */}
           <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
             <a
-              href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Inquiry"
+              href="#contact"
+              onClick={handleInitiateMandate}
               className="btn-primary !py-2.5 !px-4 !text-xs sm:!text-[13px] !rounded-lg"
             >
               <span>Initiate Mandate</span>
@@ -186,15 +205,16 @@ export default function Navbar() {
                 <div className="text-xs text-slate-500 font-terminal">
                   ADVISORY DESK:{" "}
                   <a
-                    href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Inquiry"
+                    href="#contact"
+                    onClick={handleInitiateMandate}
                     className="text-slate-900 font-semibold hover:text-[#0052CC]"
                   >
                     info@esinnov.com
                   </a>
                 </div>
                 <a
-                  href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Inquiry"
-                  onClick={() => setMobileOpen(false)}
+                  href="#contact"
+                  onClick={handleInitiateMandate}
                   className="btn-primary !w-full sm:!w-auto !py-3 !px-5 !text-sm"
                 >
                   <span>Initiate Mandate</span>

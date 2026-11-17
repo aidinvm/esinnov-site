@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
+import { useState, useEffect, useRef, type MouseEvent, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -15,6 +16,7 @@ import {
   Mail,
   Copy,
   Check,
+  Send,
 } from "lucide-react";
 
 const executiveAuthority = [
@@ -42,6 +44,7 @@ const executiveAuthority = [
 
 const practicePillars = [
   {
+    id: "npi-program",
     code: "PRACTICE PILLAR // 01",
     title: "New Product Introduction (NPI) & Technical Program Delivery",
     summary:
@@ -52,9 +55,9 @@ const practicePillars = [
       "Structured operational handover, SOP documentation, and production ramp governance",
     ],
     ctaLabel: "Inquire Regarding Program Delivery",
-    subject: "NPI%20%26%20Technical%20Program%20Delivery%20Inquiry",
   },
   {
+    id: "supply-chain",
     code: "PRACTICE PILLAR // 02",
     title: "Supply Chain, 3PL & Trade Compliance Turnaround",
     summary:
@@ -65,9 +68,9 @@ const practicePillars = [
       "Multi-currency landed-cost modeling, EDI/ERP fulfillment integration, and working-capital recovery",
     ],
     ctaLabel: "Inquire Regarding Supply Chain Turnaround",
-    subject: "Supply%20Chain%2C%203PL%20%26%20Trade%20Compliance%20Turnaround%20Inquiry",
   },
   {
+    id: "operational-excellence",
     code: "PRACTICE PILLAR // 03",
     title: "Operational Excellence & Regulatory Governance",
     summary:
@@ -78,7 +81,6 @@ const practicePillars = [
       "Product environmental compliance governance (REACH, RoHS, TSCA, PFAS, and conflict minerals)",
     ],
     ctaLabel: "Inquire Regarding Operational Excellence",
-    subject: "Operational%20Excellence%20%26%20Regulatory%20Governance%20Inquiry",
   },
 ];
 
@@ -191,9 +193,93 @@ const governanceFaqs = [
   },
 ];
 
+const mandateOptions = [
+  {
+    id: "mandate-discussion",
+    label: "Embedded Operations & Mandate Discussion",
+  },
+  {
+    id: "partner-onboarding",
+    label: "Prime Partner Vendor Onboarding",
+  },
+  {
+    id: "npi-program",
+    label: "NPI & Technical Program Delivery",
+  },
+  {
+    id: "supply-chain",
+    label: "Supply Chain, 3PL & Trade Compliance Turnaround",
+  },
+  {
+    id: "operational-excellence",
+    label: "Operational Excellence & Regulatory Governance",
+  },
+  {
+    id: "applied-workflow",
+    label: "Applied Workflow Architecture Review",
+  },
+];
+
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [copiedEmail, setCopiedEmail] = useState(false);
+
+  // Interactive Advisory Desk Form State
+  const [formData, setFormData] = useState({
+    service: "mandate-discussion",
+    name: "",
+    email: "",
+    company: "",
+    useCase: "",
+  });
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [formHighlighted, setFormHighlighted] = useState(false);
+
+  const captchaRef = useRef<HCaptcha>(null);
+  const nameInputRef = useRef<HTMLInputElement>(null);
+
+  const initiateMandateInquiry = (serviceId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      service: serviceId,
+    }));
+    setIsSubmitted(false);
+    setSubmitError(null);
+    setFormHighlighted(true);
+
+    const contactSection = document.getElementById("contact");
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: "smooth" });
+    }
+    window.history.pushState(null, "", "#contact");
+
+    setTimeout(() => {
+      nameInputRef.current?.focus({ preventScroll: true });
+    }, 450);
+
+    setTimeout(() => {
+      setFormHighlighted(false);
+    }, 1800);
+  };
+
+  useEffect(() => {
+    const handleExternalMandate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ service?: string }>;
+      const serviceId = customEvent.detail?.service || "mandate-discussion";
+      initiateMandateInquiry(serviceId);
+    };
+
+    window.addEventListener("esinnov:initiate-mandate", handleExternalMandate);
+    return () => {
+      window.removeEventListener(
+        "esinnov:initiate-mandate",
+        handleExternalMandate
+      );
+    };
+  }, []);
 
   const scrollToSection = (
     e: MouseEvent<HTMLAnchorElement>,
@@ -213,7 +299,57 @@ export default function HomePage() {
       setCopiedEmail(true);
       setTimeout(() => setCopiedEmail(false), 2500);
     } catch {
-      window.location.href = "mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry";
+      nameInputRef.current?.focus();
+    }
+  };
+
+  const handleFormSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!captchaToken) {
+      setSubmitError("Please complete the human verification below.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          captchaToken,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.details || data.error || "Failed to submit inquiry");
+      }
+
+      setIsSubmitted(true);
+      setFormData({
+        service: "mandate-discussion",
+        name: "",
+        email: "",
+        company: "",
+        useCase: "",
+      });
+      setCaptchaToken(null);
+      captchaRef.current?.resetCaptcha();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to submit inquiry";
+      setSubmitError(
+        `${message}. You may also reach our advisory desk directly at info@esinnov.com.`
+      );
+      captchaRef.current?.resetCaptcha();
+      setCaptchaToken(null);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -272,7 +408,11 @@ export default function HomePage() {
                   className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2"
                 >
                   <a
-                    href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Discussion"
+                    href="#contact"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      initiateMandateInquiry("mandate-discussion");
+                    }}
                     className="btn-primary !w-full sm:!w-auto"
                   >
                     <span>Initiate Mandate Discussion</span>
@@ -410,7 +550,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {practicePillars.map((pillar, i) => (
               <motion.div
-                key={pillar.title}
+                key={pillar.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -448,7 +588,11 @@ export default function HomePage() {
 
                 <div className="pt-4 border-t border-slate-100">
                   <a
-                    href={`mailto:info@esinnov.com?subject=${pillar.subject}`}
+                    href="#contact"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      initiateMandateInquiry(pillar.id);
+                    }}
                     className="link-action"
                   >
                     <span>{pillar.ctaLabel}</span>
@@ -523,7 +667,11 @@ export default function HomePage() {
           {/* Section CTA */}
           <div className="mt-10 sm:mt-12 flex items-center justify-start">
             <a
-              href="mailto:info@esinnov.com?subject=Applied%20Workflow%20Architecture%20Review"
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                initiateMandateInquiry("applied-workflow");
+              }}
               className="btn-primary !w-full sm:!w-auto"
             >
               <span>Request an Applied Workflow Architecture Review</span>
@@ -588,6 +736,29 @@ export default function HomePage() {
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Partner Onboarding CTA Anchor */}
+          <div className="mt-10 sm:mt-12 p-6 sm:p-8 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-1">
+              <div className="font-terminal text-xs uppercase tracking-wider text-[#0052CC] font-semibold">
+                CORP-TO-CORP DELIVERY STANDARD
+              </div>
+              <p className="font-heading text-base sm:text-lg text-slate-900">
+                Vendor registration and capability credentials dispatched same-day.
+              </p>
+            </div>
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                initiateMandateInquiry("partner-onboarding");
+              }}
+              className="btn-primary !w-full md:!w-auto flex-shrink-0"
+            >
+              <span>Initiate Partner Onboarding</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </section>
@@ -721,6 +892,7 @@ export default function HomePage() {
                 return (
                   <div key={faq.q} className="py-1">
                     <button
+                      type="button"
                       onClick={() => setOpenFaq(isOpen ? null : index)}
                       className="w-full py-5 flex items-center justify-between gap-4 text-left group focus:outline-none"
                       aria-expanded={isOpen}
@@ -763,17 +935,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== SECTION 7: DIRECT CONTACT PRE-FOOTER CALLOUT (#contact) ===== */}
-      <section id="contact" className="py-16 sm:py-20 bg-slate-50/70">
+      {/* ===== SECTION 7: DIRECT ADVISORY DESK & INQUIRY FORM (#contact) ===== */}
+      <section id="contact" className="py-16 sm:py-20 lg:py-24 bg-slate-50/70">
         <div className="section-container">
-          <div className="rounded-2xl bg-white border border-slate-200/90 p-6 sm:p-10 lg:p-12 shadow-xs">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-8 space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            {/* Left Column: Advisory Desk Overview & Direct Dispatch */}
+            <div className="lg:col-span-5 space-y-6">
+              <div className="space-y-4">
                 <div className="eyebrow-label">DIRECT ADVISORY DESK</div>
                 <h2 className="font-heading text-headline text-slate-950 text-balance">
                   Initiate a mandate or vendor registration.
                 </h2>
-                <p className="text-body-lg text-slate-600 max-w-2xl">
+                <p className="text-body-lg text-slate-600 leading-relaxed">
                   For staffing partners and operations leaders seeking embedded
                   program or supply chain leadership, or commercial operators
                   scoping workflow automation, contact our advisory desk for
@@ -781,43 +954,288 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="lg:col-span-4 flex flex-col items-stretch gap-3">
-                <a
-                  href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
-                  className="btn-primary !py-4 !px-6 !text-base w-full"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>Contact Advisory Desk</span>
-                </a>
-                <div className="flex flex-wrap items-center justify-center gap-2 font-terminal text-xs text-slate-500 py-1">
-                  <span>Direct Dispatch:</span>
-                  <a
-                    href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
-                    className="text-slate-900 font-semibold hover:text-[#0052CC] underline-offset-2 hover:underline"
-                  >
-                    info@esinnov.com
-                  </a>
-                  <button
-                    type="button"
-                    onClick={handleCopyEmail}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer"
-                    aria-label="Copy info@esinnov.com to clipboard"
-                  >
-                    {copiedEmail ? (
-                      <>
-                        <Check className="w-3 h-3 text-emerald-600" />
-                        <span className="text-emerald-700 font-medium">
-                          Copied to clipboard
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3 h-3" />
-                        <span>Copy</span>
-                      </>
-                    )}
-                  </button>
+              {/* Regional Coverage & SLA Specs */}
+              <div className="bg-white border border-slate-200/90 rounded-xl p-5 sm:p-6 space-y-4 shadow-2xs">
+                <div className="space-y-1">
+                  <div className="font-terminal text-[11px] uppercase tracking-wider text-slate-400">
+                    REGIONAL COVERAGE
+                  </div>
+                  <div className="font-heading text-sm sm:text-base font-semibold text-slate-950">
+                    Calgary, AB • Serving Alberta &amp; British Columbia
+                  </div>
                 </div>
+                <div className="border-t border-slate-100 pt-4 space-y-1">
+                  <div className="font-terminal text-[11px] uppercase tracking-wider text-slate-400">
+                    PARTNER ONBOARDING SLA
+                  </div>
+                  <div className="text-sm text-slate-600">
+                    Corporate vendor registration, commercial insurance, and
+                    capability documentation dispatched same-day.
+                  </div>
+                </div>
+                <div className="border-t border-slate-100 pt-4 space-y-2">
+                  <div className="font-terminal text-[11px] uppercase tracking-wider text-slate-400">
+                    DIRECT DISPATCH
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <a
+                      href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
+                      className="inline-flex items-center gap-1.5 font-terminal text-sm font-semibold text-slate-950 hover:text-[#0052CC] transition-colors"
+                    >
+                      <Mail className="w-4 h-4 text-[#0052CC]" />
+                      <span>info@esinnov.com</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={handleCopyEmail}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 font-terminal text-xs text-slate-700 transition-colors cursor-pointer"
+                      aria-label="Copy info@esinnov.com to clipboard"
+                    >
+                      {copiedEmail ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="text-emerald-700 font-medium">
+                            Copied to clipboard
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Interactive Advisory Desk Form */}
+            <div className="lg:col-span-7">
+              <div
+                id="advisory-form"
+                className={`bg-white rounded-2xl border p-6 sm:p-8 lg:p-10 transition-all duration-300 ${
+                  formHighlighted
+                    ? "border-[#0052CC] ring-4 ring-[#0052CC]/10 shadow-md"
+                    : "border-slate-200/90 shadow-xs"
+                }`}
+              >
+                {isSubmitted ? (
+                  <div className="py-8 sm:py-12 text-center space-y-5">
+                    <div className="w-14 h-14 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto">
+                      <CheckCircle2 className="w-7 h-7 text-emerald-600" />
+                    </div>
+                    <div className="space-y-2 max-w-md mx-auto">
+                      <div className="font-terminal text-xs uppercase tracking-wider text-emerald-700 font-semibold">
+                        DISPATCH CONFIRMED
+                      </div>
+                      <h3 className="font-heading text-2xl text-slate-950">
+                        Advisory Inquiry Received
+                      </h3>
+                      <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                        Thank you for contacting EcoSync Innovations Inc. Our
+                        advisory desk reviews all mandate scopes and partner
+                        onboarding requests for same-day response.
+                      </p>
+                    </div>
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setIsSubmitted(false)}
+                        className="btn-secondary !text-sm"
+                      >
+                        Submit Another Inquiry
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleFormSubmit} className="space-y-5">
+                    <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                      <div>
+                        <h3 className="font-heading text-lg sm:text-xl text-slate-950">
+                          Contact Advisory Desk
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                          Submit mandate scope, vendor registration, or workflow
+                          review details.
+                        </p>
+                      </div>
+                      <span className="hidden sm:inline-flex font-terminal text-[11px] uppercase tracking-wider px-2.5 py-1 rounded bg-slate-100 text-slate-600">
+                        NDA READY
+                      </span>
+                    </div>
+
+                    {/* Mandate / Scope Selector */}
+                    <div>
+                      <label
+                        htmlFor="mandate-service"
+                        className="block font-terminal text-[11px] uppercase tracking-wider text-slate-600 font-semibold mb-1.5"
+                      >
+                        Mandate / Scope Category *
+                      </label>
+                      <select
+                        id="mandate-service"
+                        name="service"
+                        value={formData.service}
+                        onChange={(e) =>
+                          setFormData({ ...formData, service: e.target.value })
+                        }
+                        required
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-950 focus:outline-none focus:border-[#0052CC] focus:ring-3 focus:ring-[#0052CC]/10 transition-all"
+                      >
+                        {mandateOptions.map((option) => (
+                          <option key={option.id} value={option.id}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Name & Email */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="mandate-name"
+                          className="block font-terminal text-[11px] uppercase tracking-wider text-slate-600 font-semibold mb-1.5"
+                        >
+                          Full Name *
+                        </label>
+                        <input
+                          ref={nameInputRef}
+                          id="mandate-name"
+                          name="name"
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          placeholder="Jane Doe"
+                          className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#0052CC] focus:ring-3 focus:ring-[#0052CC]/10 transition-all"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="mandate-email"
+                          className="block font-terminal text-[11px] uppercase tracking-wider text-slate-600 font-semibold mb-1.5"
+                        >
+                          Work Email *
+                        </label>
+                        <input
+                          id="mandate-email"
+                          name="email"
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
+                          placeholder="name@organization.com"
+                          className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#0052CC] focus:ring-3 focus:ring-[#0052CC]/10 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Organization / Firm */}
+                    <div>
+                      <label
+                        htmlFor="mandate-company"
+                        className="block font-terminal text-[11px] uppercase tracking-wider text-slate-600 font-semibold mb-1.5"
+                      >
+                        Organization / Staffing Partner Firm
+                      </label>
+                      <input
+                        id="mandate-company"
+                        name="company"
+                        type="text"
+                        value={formData.company}
+                        onChange={(e) =>
+                          setFormData({ ...formData, company: e.target.value })
+                        }
+                        placeholder="Optional company or agency name"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#0052CC] focus:ring-3 focus:ring-[#0052CC]/10 transition-all"
+                      />
+                    </div>
+
+                    {/* Mandate Scope & Timeline */}
+                    <div>
+                      <label
+                        htmlFor="mandate-scope"
+                        className="block font-terminal text-[11px] uppercase tracking-wider text-slate-600 font-semibold mb-1.5"
+                      >
+                        Mandate Scope &amp; Timeline *
+                      </label>
+                      <textarea
+                        id="mandate-scope"
+                        name="useCase"
+                        required
+                        rows={4}
+                        value={formData.useCase}
+                        onChange={(e) =>
+                          setFormData({ ...formData, useCase: e.target.value })
+                        }
+                        placeholder="Outline operational objectives, target start timeline, or ERP/workflow systems..."
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#0052CC] focus:ring-3 focus:ring-[#0052CC]/10 transition-all resize-y"
+                      />
+                    </div>
+
+                    {/* Human Verification */}
+                    <div>
+                      <span className="block font-terminal text-[11px] uppercase tracking-wider text-slate-600 font-semibold mb-2">
+                        Human Verification *
+                      </span>
+                      <div className="p-3 sm:p-4 rounded-lg bg-slate-50 border border-slate-200 overflow-x-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <HCaptcha
+                          ref={captchaRef}
+                          sitekey="21ca1b58-b39a-4c00-94e8-229ed888dfc6"
+                          onVerify={(token) => {
+                            setCaptchaToken(token);
+                            setSubmitError(null);
+                          }}
+                          onExpire={() => setCaptchaToken(null)}
+                          theme="light"
+                        />
+                        {captchaToken && (
+                          <div className="inline-flex items-center gap-1.5 font-terminal text-xs text-emerald-700 font-medium flex-shrink-0">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span>Verified</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {submitError && (
+                      <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs sm:text-sm">
+                        {submitError}
+                      </div>
+                    )}
+
+                    {/* Submit CTA */}
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="btn-primary w-full !py-3.5 !text-sm sm:!text-base disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Dispatching Inquiry...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Contact Advisory Desk</span>
+                        </>
+                      )}
+                    </button>
+
+                    <p className="text-[11px] font-terminal text-slate-400 text-center pt-1">
+                      Strict confidentiality maintained. Zero external data
+                      sharing.
+                    </p>
+                  </form>
+                )}
               </div>
             </div>
           </div>

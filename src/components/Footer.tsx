@@ -1,7 +1,7 @@
 "use client";
 
-import type { MouseEvent } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useState, type MouseEvent } from "react";
+import { ArrowUpRight, Copy, Check } from "lucide-react";
 
 const footerLinks = [
   { href: "#core-practices", label: "Core Practices" },
@@ -13,16 +13,40 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
   const handleAnchorClick = (
     e: MouseEvent<HTMLAnchorElement>,
     href: string
   ) => {
     e.preventDefault();
+    if (href === "#contact") {
+      window.dispatchEvent(
+        new CustomEvent("esinnov:initiate-mandate", {
+          detail: { service: "mandate-discussion" },
+        })
+      );
+    }
     const target = document.querySelector(href);
     if (target) {
       target.scrollIntoView({ behavior: "smooth" });
     }
     window.history.pushState(null, "", href);
+  };
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("info@esinnov.com");
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2500);
+    } catch {
+      window.dispatchEvent(
+        new CustomEvent("esinnov:initiate-mandate", {
+          detail: { service: "mandate-discussion" },
+        })
+      );
+      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -65,22 +89,41 @@ export default function Footer() {
           </div>
 
           {/* Center Column */}
-          <div className="md:col-span-4">
+          <div className="md:col-span-3">
             <p className="text-sm text-slate-600 leading-relaxed">
               Industrial Operations, Program Delivery &amp; Applied Systems Advisory
             </p>
           </div>
 
           {/* Right Column */}
-          <div className="md:col-span-3 md:text-right space-y-1.5">
-            <div className="flex flex-wrap md:justify-end items-center gap-x-4 gap-y-1">
+          <div className="md:col-span-4 md:text-right space-y-2">
+            <div className="flex flex-wrap md:justify-end items-center gap-2.5">
               <a
-                href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
+                href="#contact"
+                onClick={(e) => handleAnchorClick(e, "#contact")}
                 className="font-terminal text-sm font-medium text-slate-900 hover:text-[#0052CC] transition-colors inline-flex items-center gap-1"
               >
                 <span>info@esinnov.com</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
               </a>
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-terminal text-slate-700 transition-colors cursor-pointer"
+                aria-label="Copy info@esinnov.com to clipboard"
+              >
+                {copiedEmail ? (
+                  <>
+                    <Check className="w-3 h-3 text-emerald-600" />
+                    <span className="text-emerald-700 font-medium">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
               <span className="text-slate-300">•</span>
               <a
                 href="https://www.linkedin.com/company/ecosync-innovations/"

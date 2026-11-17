@@ -41,6 +41,12 @@ export async function POST(request: Request) {
 
         // Map service ID to readable name
         const serviceNames: Record<string, string> = {
+            'mandate-discussion': 'Embedded Operations & Mandate Discussion',
+            'partner-onboarding': 'Prime Partner Vendor Onboarding',
+            'npi-program': 'NPI & Technical Program Delivery',
+            'supply-chain': 'Supply Chain, 3PL & Trade Compliance Turnaround',
+            'operational-excellence': 'Operational Excellence & Regulatory Governance',
+            'applied-workflow': 'Applied Workflow Architecture Review',
             feasibility: 'Feasibility Study',
             pilot: 'Agent Pilot',
             deployment: 'Production Deployment'
