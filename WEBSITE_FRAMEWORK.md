@@ -1,133 +1,268 @@
-# ESInnov Website Framework & Contents
+# ESInnov Website Framework & Sitemap
 
-## Overview
-**ESInnov (EcoSync Innovations)** - A real estate intelligence boutique website built with Next.js 14 App Router, Tailwind CSS, and Framer Motion.
-
----
-
-## Tech Stack
-| Technology | Purpose |
-|------------|---------|
-| Next.js 14 | React framework with App Router |
-| TypeScript | Type-safe development |
-| Tailwind CSS | Utility-first styling |
-| Framer Motion | Animations & transitions |
-| Lucide React | Icon library |
+> **Visual Architecture Guide** | Version 2.0  
+> Last Updated: January 19, 2026
 
 ---
 
-## Site Structure
+## 🗺️ Site Map Overview
 
 ```
-esinnov-site/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx              # Landing Page
-│   │   ├── layout.tsx            # Root Layout
-│   │   ├── globals.css           # Global Styles
-│   │   ├── about/                # About Page
-│   │   ├── consulting/           # Services Page
-│   │   ├── methodology/          # Zone IQ Methodology
-│   │   ├── contact/              # Contact Form
-│   │   ├── cases/                # Case Studies
-│   │   └── api/
-│   │       ├── demo/             # Original demo API
-│   │       └── demo-public/      # Secured public demo API
-│   └── components/
-│       ├── Navbar.tsx            # Site navigation
-│       ├── Footer.tsx            # Site footer
-│       ├── ScrollReveal.tsx      # Scroll animations
-│       ├── GlassCard.tsx         # Glass morphism cards
-│       ├── PageTransition.tsx    # Page transitions
-│       ├── ParallaxSection.tsx   # Parallax effects
-│       └── PulseGlow.tsx         # Glowing effects
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                              ESINNOV.COM                                       ║
+║                         Agentic Intelligence Studio                            ║
+╠═══════════════════════════════════════════════════════════════════════════════╣
+║                                                                               ║
+║    ┌───────────────────────────────────────────────────────────────────┐     ║
+║    │                        🏠 HOME (/)                                 │     ║
+║    │                   Primary Landing Page                             │     ║
+║    │  ┌─────────────┬─────────────┬─────────────┬─────────────┐        │     ║
+║    │  │    Hero     │   Pillars   │   Use Cases │    FAQ      │        │     ║
+║    │  │   Section   │    Grid     │    Cards    │  Accordion  │        │     ║
+║    │  └─────────────┴─────────────┴─────────────┴─────────────┘        │     ║
+║    └───────────────────────────────────────────────────────────────────┘     ║
+║                                    │                                          ║
+║          ┌─────────────────────────┼─────────────────────────┐               ║
+║          │                         │                         │               ║
+║          ▼                         ▼                         ▼               ║
+║    ╔═══════════╗            ╔═══════════╗            ╔═══════════╗          ║
+║    ║ DISCOVER  ║            ║  CONVERT  ║            ║ VALIDATE  ║          ║
+║    ╚═════╤═════╝            ╚═════╤═════╝            ╚═════╤═════╝          ║
+║          │                        │                        │                 ║
+║    ┌─────┴─────┐            ┌─────┴─────┐            ┌─────┴─────┐          ║
+║    │           │            │           │            │           │          ║
+║    ▼           ▼            ▼           ▼            ▼           ▼          ║
+║  /about    /research     /access   /advisory    /methodology /protocols    ║
+║  /cases                    /faq                 /zone-iq-demo              ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-## Pages Content
+## 📑 Page Inventory
 
-### 1. Landing Page (`/`)
-**Key Sections:**
-- **Hero Section** - Full-width headline with CTA
-- **Tech Stack Strip** - Animated tech logos slider
-- **Built by Operators** - 3-column card grid (Deal Flow Analytics, Acquisition Timeline, Case Performance)
-- **We Automated the Argument** - AI Agent showcase (Sentinel™, Catalyst™, Arbiter™)
-- **Zone IQ Engine Demo** - Embedded interactive demo (secured via API)
-- **Productized Consulting** - Service offerings cards
-- **Team Section** - Leadership profile
+### Primary Pages (High Priority)
 
-### 2. About Page (`/about`)
-**Key Sections:**
-- **Hero** - "Bridging Data and Dirt"
-- **Origin Story** - Company founding narrative
-- **Corporate Structure** - Dual-track model cards
-- **Strategic Direction** - Leadership profile (Aidin VM)
+| Route | Title | Purpose |
+|-------|-------|---------|
+| `/` | Landing Page | Main conversion, hero, value proposition |
+| `/access` | Get Started | Lead capture, service tier selection |
+| `/advisory` | Advisory Services | Detailed service breakdown |
+| `/zone-iq-demo` | Zone IQ Demo | Interactive product demonstration |
 
-### 3. Consulting Page (`/consulting`)
-**Key Sections:**
-- **Hero** - "Productized Intelligence"
-- **The Infill Filter** - For Developers
-- **The Listing Winner** - For Realtors
-- **Smart Reno Matrix** - For Owners
-- **Jurisdiction Protocols** - AB (Safe Harbor Scan) & BC (Bill 44/47 Hunter)
-- **CTA** - Consultation request
+### Secondary Pages (Medium Priority)
 
-### 4. Methodology Page (`/methodology`)
-**Key Sections:**
-- **Hero** - "The Adversarial Council"
-- **Vertical Timeline** - GIS Ingestion → Agent Debate → The Verdict
-- **The Output** - Feasibility score display
-- **Tech Stack Slider** - Infinite scroll of technologies
+| Route | Title | Purpose |
+|-------|-------|---------|
+| `/methodology` | Methodology | Agentic workflow explanation |
+| `/protocols` | Architecture | Technical deep-dive |
+| `/about` | About | Company & leadership profile |
+| `/research` | Research | Articles, newsletter signup |
+| `/cases` | Case Studies | Success stories |
 
-### 5. Contact Page (`/contact`)
-**Key Sections:**
-- **Hero** - "Stop Guessing. Start Calculating."
-- **Protocol Selection Form** - Client type, turnaround, contact info
-- **Engagement Criteria** - Focus areas and notes
-- **Office Info** - Location and email
+### Utility Pages (Lower Priority)
+
+| Route | Title | Purpose |
+|-------|-------|---------|
+| `/faq` | FAQ | Common questions |
 
 ---
 
-## Components
+## 🧩 Component Architecture
 
-| Component | Description |
-|-----------|-------------|
-| `Navbar` | Responsive navigation with mobile menu |
-| `Footer` | Site footer with links and social |
-| `ScrollReveal` | Wrapper for scroll-triggered animations |
-| `GlassCard` | Glass morphism card with teal variant |
-| `PageTransition` | Page entrance/exit animations |
-| `ParallaxSection` | Scroll-based parallax effects |
-| `PulseGlow` | Pulsing glow animation element |
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           LAYOUT COMPONENTS                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌──────────────────────────────────────────────────────────────────┐   │
+│  │  Navbar.tsx                                                       │   │
+│  │  • Responsive navigation with mobile menu                        │   │
+│  │  • Logo + nav links + CTA button                                 │   │
+│  └──────────────────────────────────────────────────────────────────┘   │
+│                                                                          │
+│                              PAGE CONTENT                                │
+│                                                                          │
+│  ┌──────────────────────────────────────────────────────────────────┐   │
+│  │  Footer.tsx                                                       │   │
+│  │  • Site links + social + legal                                   │   │
+│  └──────────────────────────────────────────────────────────────────┘   │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### UI Components
+
+```
+┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐
+│   AnimatedTitle    │  │  AgenticStackVisual │  │   TechStrip        │
+│   ─────────────    │  │  ─────────────────  │  │   ─────────        │
+│   Hero scramble    │  │   SVG wireframe    │  │   Logo marquee     │
+│   text animation   │  │   architecture     │  │   infinite scroll  │
+└────────────────────┘  └────────────────────┘  └────────────────────┘
+
+┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐
+│   LiveDataTicker   │  │  TerminalButton    │  │   RiskIndexWidget  │
+│   ─────────────    │  │  ──────────────    │  │   ───────────────  │
+│   Status ticker    │  │   CTA with cursor  │  │   Risk analysis    │
+│   reverse scroll   │  │   blink animation  │  │   visualization    │
+└────────────────────┘  └────────────────────┘  └────────────────────┘
+
+┌────────────────────┐  ┌────────────────────┐  ┌────────────────────┐
+│   GlassCard        │  │  ScrollReveal      │  │   CountUp          │
+│   ─────────        │  │  ────────────      │  │   ───────          │
+│   Frosted glass    │  │  Scroll-triggered  │  │   Animated number  │
+│   card styling     │  │  reveal wrapper    │  │   counter          │
+└────────────────────┘  └────────────────────┘  └────────────────────┘
+```
 
 ---
 
-## Secured Demo API
+## 🎨 Design System
 
-The Zone IQ demo is served via `/api/demo-public` with security features:
-- Origin/referrer validation
-- Blocks direct navigation (`sec-fetch-dest` check)
-- X-Frame-Options: SAMEORIGIN
-- Content-Security-Policy headers
-- Only accessible via iframe from allowed origins
+### Color Palette
+
+```
+PRIMARY COLORS
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                      │
+│  ██████  Signal Blue       #0066FF   CTAs, links, primary accent    │
+│  ██████  Blue Dark         #0052CC   Hover states                   │
+│  ██████  Emerald           #10B981   Success, active indicators     │
+│  ██████  Violet            #8B5CF6   Secondary accent               │
+│  ██████  Amber             #F59E0B   Warnings, highlights           │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+NEUTRAL COLORS
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                      │
+│  ██████  White             #FFFFFF   Primary background             │
+│  ██████  Surface           #F8F9FC   Alternate sections             │
+│  ██████  Navy Dark         #0F172A   Dark sections, text            │
+│  ██████  Slate             #475569   Secondary text                 │
+│  ██████  Tertiary          #94A3B8   Muted text                     │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Typography Scale
+
+```
+FONTS
+───────────────────────────────────────────────────────
+Inter              →  Body text, UI elements
+JetBrains Mono     →  Code, terminal, technical labels
+
+SIZES (Responsive)
+───────────────────────────────────────────────────────
+Display   →  clamp(2rem, 5vw, 3.5rem)      Hero headlines
+Headline  →  clamp(1.5rem, 3.5vw, 2.25rem) Section titles
+Title     →  clamp(1.25rem, 2.5vw, 1.5rem) Card titles
+Body      →  clamp(0.9375rem, 1.5vw, 1.0625rem) Paragraphs
+```
 
 ---
 
-## Design Tokens
+## 🔌 API Routes
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `signal-teal` | #2B9CA6 | Primary accent |
-| `data-white` | #F8FAFC | Text color |
-| `void-navy` | #0F172A | Background |
-| `alert-red` | #F87171 | Warning/error |
+```
+/api
+├── /contact              POST   Contact form submission
+│   └── Integrates with Resend for email delivery
+│
+├── /subscribe            POST   Newsletter subscription
+│   └── Email list management
+│
+├── /demo-public          GET    Secured Zone IQ demo
+│   └── Security: Origin validation, X-Frame-Options
+│
+└── /demo                 GET    Original demo API
+```
 
 ---
 
-## Brand Elements
+## 📱 Responsive Breakpoints
 
-- **Zone IQ™** - Proprietary feasibility engine
-- **Sentinel Agent™** - Risk Vector Analysis
-- **Catalyst Agent™** - Opportunity Signal Detection
-- **Arbiter Agent™** - Decision Synthesis
+```
+MOBILE FIRST APPROACH
+───────────────────────────────────────────────────────
+
+< 640px   │  MOBILE
+          │  • Single column layouts
+          │  • Full-width buttons
+          │  • Stacked navigation
+          │  • Simplified animations
+          ▼
+768px     │  TABLET
+          │  • 2-column grids
+          │  • Side-by-side layouts
+          │  • Expanded navigation
+          ▼
+1024px    │  DESKTOP
+          │  • 3+ column grids
+          │  • Full layouts
+          │  • All animations active
+          ▼
+1280px    │  WIDE
+          │  • Max-width container
+          │  • Centered content
+```
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+# → http://localhost:3000
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+---
+
+## 📋 File Index
+
+| Directory | Files | Purpose |
+|-----------|-------|---------|
+| `src/app/` | 10 routes | Next.js App Router pages |
+| `src/components/` | 17 files | Reusable React components |
+| `src/app/api/` | 4 routes | Backend API endpoints |
+| `public/` | 20 assets | Static files, images, logos |
+
+---
+
+## 🏷️ Brand Assets
+
+| Asset | File | Format |
+|-------|------|--------|
+| Main Logo | `esinnov-logo.png` | PNG (718KB) |
+| Favicon | `favicon.ico` | ICO |
+| Hero Image | `hero-city.jpg` | JPG (318KB) |
+| Tech Logos | `logo-*.png` | Various |
+
+---
+
+## 🔗 External Integrations
+
+| Service | Purpose | Config |
+|---------|---------|--------|
+| **hCaptcha** | Bot protection | `.env.local` |
+| **Resend** | Email delivery | `.env.local` |
+| **Bing Webmaster** | Search indexing | `BingSiteAuth.xml` |
+| **LinkedIn** | Social profile | About page |
+
+---
+
+*ESInnov Website Framework v2.0*  
+*Last Updated: January 19, 2026*

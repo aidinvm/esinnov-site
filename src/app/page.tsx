@@ -1,574 +1,947 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight, ChevronDown, Send,
-  Database, Brain, Shield, Network,
-  Layers, Users, Check, Zap, Code
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  ChevronDown,
+  ShieldCheck,
+  Cpu,
+  FileCheck2,
+  BarChart3,
+  Lock,
+  Layers,
+  Building2,
+  Compass,
+  Workflow,
+  Mail,
 } from "lucide-react";
-import LiveDataTicker from "@/components/LiveDataTicker";
-import AnimatedTitle from "@/components/AnimatedTitle";
-import AgenticStackVisual from "@/components/AgenticStackVisual";
-import CountUp from "@/components/CountUp";
 
-// Protocol Stack
-const protocols = [
-  { name: "MCP", desc: "Model Context Protocol" },
-  { name: "A2A", desc: "Agent2Agent Protocol" },
-  { name: "Agentic RAG", desc: "Dynamic Retrieval" },
-];
-
-// Architecture Pillars
-const pillars = [
+const sectorAuthority = [
   {
-    icon: Database,
-    title: "Intelligent Indexing",
-    desc: "Agents autonomously decide what to store and how to structure it. Dynamic chunking, metadata extraction, and context-aware embeddings."
+    index: "01",
+    sector: "Mobile Power & Clean Energy",
+    scope: "Plant & 3PL Supply Chain Leadership",
   },
   {
-    icon: Network,
-    title: "Dynamic Retrieval",
-    desc: "Retriever routers analyze each query and select the optimal source—SQL, vector search, web, or internal docs."
+    index: "02",
+    sector: "Enterprise IoT & Telematics",
+    scope: "$5M+ Platform Program Delivery",
   },
   {
-    icon: Shield,
-    title: "Verified Generation",
-    desc: "Critic agents validate outputs through iterative loops. Human-in-the-loop approval before delivery."
+    index: "03",
+    sector: "Heavy & Regulated Industry",
+    scope: "Steel • Pharma Distribution • Automotive",
+  },
+  {
+    index: "04",
+    sector: "Engineering Foundation",
+    scope: "MSc Industrial Systems Engineering",
   },
 ];
 
-// Zone IQ Capabilities
-const zoneIQCapabilities = [
-  { label: "Multi-Agent Reasoning", desc: "Parallel agent swarms for complex analysis" },
-  { label: "Sovereign RAG", desc: "Private knowledge graphs, zero data leakage" },
-  { label: "MCP Integration", desc: "Standardized context management for tools" },
-  { label: "A2A Protocol Ready", desc: "Interoperable with enterprise agent ecosystems" },
+const engagementSteps = [
+  {
+    step: "01",
+    title: "Partner Onboarding",
+    desc: "Prime agencies onboard EcoSync Innovations Inc. as an approved corporate supplier. Vendor credentials and principal CV are dispatched same-day.",
+    tag: "24–48h Turnaround",
+  },
+  {
+    step: "02",
+    title: "Mandate Alignment",
+    desc: "Deployment for 3–6 month NPI launches, operational bottleneck resolution, or interim leadership mandates. Direct technical vetting with the client operations team.",
+    tag: "3–6 Month Horizon",
+  },
+  {
+    step: "03",
+    title: "Embedded Execution",
+    desc: "Execution occurs entirely within the client's enterprise environment (ERP/PLM) under the prime firm's NDA. Zero external data exposure; disciplined weekly milestone governance.",
+    tag: "Client-Tenant Native",
+  },
 ];
 
-// Integration Stack
-const integrations = [
-  "LangChain", "n8n", "Pinecone", "Supabase", "OpenAI", "Anthropic", "Google AI", "PostgreSQL"
+const practiceAreas = [
+  {
+    code: "MANDATE // 01",
+    title: "NPI & Program Delivery",
+    desc: "End-to-end governance of new product introductions from design freeze through commercial launch—proven across commercial power electronics and multi-million-dollar IoT platforms.",
+    deliverables: [
+      "Critical path scheduling, risk mitigation & stage-gate governance",
+      "Vendor qualification, build readiness & validation testing",
+      "Structured operational handover & SOP documentation",
+    ],
+    ctaLabel: "Request NPI Mandate",
+    subject: "NPI%20%26%20Program%20Delivery%20Mandate",
+  },
+  {
+    code: "MANDATE // 02",
+    title: "Operations Turnaround",
+    desc: "Systematic elimination of throughput bottlenecks, inventory discrepancies, and administrative drag using applied Lean Six Sigma and industrial systems engineering.",
+    deliverables: [
+      "Floor-level value stream mapping & constraint removal",
+      "Process re-engineering inside existing ERP systems",
+      "Quantifiable cycle-time and working-capital recovery",
+    ],
+    ctaLabel: "Request Turnaround Mandate",
+    subject: "Operations%20Turnaround%20Mandate",
+  },
+  {
+    code: "MANDATE // 03",
+    title: "Supply Chain & Interim Ops",
+    desc: "Immediate leadership coverage for supply chain planning, 3PL kitting transitions, or interim plant management during organizational restructuring or rapid scaling.",
+    deliverables: [
+      "BOM reconciliation, procurement & 3PL warehouse coordination",
+      "Executive KPI dashboards (Power BI / SAP / NetSuite)",
+      "Seamless bridge leadership during executive searches",
+    ],
+    ctaLabel: "Request Interim Coverage",
+    subject: "Supply%20Chain%20%26%20Interim%20Operations%20Coverage",
+  },
 ];
 
-// FAQ
+const pedigreeTimeline = [
+  {
+    domain: "Mobile Power & Clean Energy Systems",
+    badge: "Calgary, AB",
+    role: "Senior Operations & Supply Chain Leadership",
+    summary:
+      "Directed manufacturing operations, 3PL warehouse kitting, cross-border logistics, and inventory reconciliation for commercial and off-grid power electronics.",
+  },
+  {
+    domain: "Industrial IoT & Telematics",
+    badge: "Program Delivery",
+    role: "$5M+ Connected Platform Program Delivery",
+    summary:
+      "Governed multi-disciplinary hardware/software program execution, vendor integration, and commercial deployment for enterprise IoT systems.",
+  },
+  {
+    domain: "Heavy & Regulated Manufacturing",
+    badge: "Multi-Sector",
+    role: "Pharmaceutical Distribution, Steel & Automotive Operations",
+    summary:
+      "Executed continuous improvement, process optimization, and industrial systems engineering across high-compliance pharmaceutical logistics, structural steel fabrication, and automotive assembly.",
+  },
+  {
+    domain: "Engineering Foundation",
+    badge: "Graduate Credential",
+    role: "MSc Industrial Systems Engineering",
+    summary:
+      "Graduate specialization in systems optimization, process modeling, and operational efficiency.",
+  },
+];
+
+const enterpriseStack = [
+  "SAP",
+  "NetSuite",
+  "Arena PLM",
+  "Power BI",
+  "Python",
+  "NPI Governance",
+  "Lean Six Sigma",
+  "IoT Architecture",
+];
+
+const backOfficeServices = [
+  {
+    title: "Quantity Takeoff & Estimating",
+    price: "$250 – $800 / takeoff",
+    desc: "Submit architectural drawings; receive structured material takeoffs and bid-ready cost sheets within 48–72 hours.",
+    cta: "Submit Drawings",
+    subject: "Quantity%20Takeoff%20%26%20Estimating%20Scope",
+  },
+  {
+    title: "ISNetworld & Avetta Compliance",
+    price: "$2,000 – $5,000 / platform",
+    desc: "End-to-end account setup, RAVS manual alignment, and safety documentation management to achieve Grade-A operator approval.",
+    cta: "Initiate Prequalification",
+    subject: "ISNetworld%20%26%20Avetta%20Prequalification",
+  },
+  {
+    title: "Ledger Cleanup & Bookkeeping",
+    price: "$800+ cleanup • $250+/mo",
+    desc: "Historical catch-up reconciliation and structured monthly financial reporting tailored for trade contractors.",
+    cta: "Request Ledger Review",
+    subject: "Contractor%20Ledger%20Cleanup%20%26%20Bookkeeping",
+  },
+  {
+    title: "Executive Positioning & AI Search",
+    price: "$1,000 – $1,500 / month",
+    desc: "B2B authority building and Generative Engine Optimization (GEO) for commercial trade owners, extracted from brief monthly interviews.",
+    cta: "Request Visibility Audit",
+    subject: "Executive%20Positioning%20%26%20AI%20Search%20Audit",
+  },
+  {
+    title: "Municipal Permitting & SECOR",
+    price: "$350–$750 permit • $2.5k+ SECOR",
+    desc: "Municipal development/building permit coordination and complete Alberta SECOR safety program documentation.",
+    cta: "Submit Permit Scope",
+    subject: "Municipal%20Permitting%20%26%20SECOR%20Support",
+  },
+  {
+    title: "Asynchronous Execution SLA",
+    price: "Dedicated Capacity",
+    desc: "Operated on strict SLA turnarounds outside core industrial hours, ensuring zero conflict of interest or capacity overlap with embedded enterprise mandates.",
+    cta: "Contact Back-Office Desk",
+    subject: "Commercial%20Back-Office%20SLA%20Inquiry",
+  },
+];
+
+const automationPillars = [
+  {
+    icon: FileCheck2,
+    title: "Document Verification",
+    desc: "Automated extraction and regulatory cross-referencing with mandatory human sign-off.",
+  },
+  {
+    icon: BarChart3,
+    title: "Operational Telemetry",
+    desc: "Automated Python/Power BI pipelines replacing manual spreadsheet consolidation.",
+  },
+  {
+    icon: Lock,
+    title: "Sovereign Deployment",
+    desc: "Executed exclusively within your existing corporate tenant; zero external model training.",
+  },
+];
+
 const faqs = [
   {
-    q: "What exactly do you automate?",
-    a: "We automate the repetitive, time consuming work that slows down your operations. Document review, data extraction, compliance checks, report generation, and multi step approval workflows. If it involves reading, analyzing, and making routine decisions, we can likely automate it."
+    q: "What mandates does ESInnov accept?",
+    a: "We specialize in 3–6 month embedded industrial mandates—specifically New Product Introduction (NPI), program delivery, supply chain stabilization, and Lean Six Sigma operational turnarounds—alongside fixed-fee back-office services for regional contractors.",
   },
   {
-    q: "How quickly will I see results?",
-    a: "You'll see a working prototype within 14 days. Most clients experience immediate time savings once we deploy, often reducing hours of manual work down to minutes. We measure success by tangible outcomes, not technical milestones."
+    q: "How quickly can ESInnov deploy?",
+    a: "Immediate capacity is available in Calgary (hybrid) with travel capability across Western Canada. Corporate vendor onboarding with staffing partners is completed within 24–48 hours.",
   },
   {
-    q: "Is my company data safe?",
-    a: "Completely. Your data stays on isolated infrastructure that we set up specifically for you. We never mix client data, never use it to train AI models, and you retain full ownership. We can also deploy within your own cloud environment if required."
+    q: "How is confidential operational data handled?",
+    a: "For embedded industrial engagements, all work is performed exclusively inside the client's enterprise environment (SAP, NetSuite, PLM) under the prime staffing partner's NDA. Zero proprietary data leaves client systems.",
   },
   {
-    q: "What's the investment?",
-    a: "Feasibility studies start at $1,500 and are delivered in 48 hours. Pilot projects are quoted based on scope. Most clients see ROI within the first month of deployment through reduced labor costs and faster turnaround times."
+    q: "Who leads the consulting practice?",
+    a: "The practice is led by Principal Consultant Aidin VM, an Industrial Systems Engineer (MSc) with over a decade of senior operations and program management leadership across power electronics, IoT, steel, pharma, and automotive sectors.",
   },
   {
-    q: "Do I need a technical team to work with you?",
-    a: "Not at all. We handle all the technical implementation. You just need someone who understands your current workflows and can tell us what's working and what's not. We translate business problems into working solutions."
+    q: "Does ESInnov compete with staffing agencies?",
+    a: "No. We actively partner with established staffing and consulting firms, operating as a reliable corp-to-corp delivery vendor under their existing client MSAs.",
   },
   {
-    q: "What happens if the AI makes a mistake?",
-    a: "Every critical decision includes human review before final action. We design systems with validation checkpoints so your team stays in control. You approve, the AI executes. No surprises, no autonomous decisions on high stakes items."
-  },
-  {
-    q: "What industries do you work with?",
-    a: "We specialize in real estate, manufacturing, and professional services. Any industry dealing with high volume paperwork, compliance requirements, or complex approval chains is a strong fit for what we build."
-  },
-  {
-    q: "How do I get started?",
-    a: "Start with a Feasibility Study. We'll analyze your use case, identify automation opportunities, and give you a clear recommendation within 48 hours. No commitment beyond that. If it makes sense to proceed, we'll scope a pilot together."
+    q: "How are commercial terms structured?",
+    a: "Embedded industrial contracts are billed corp-to-corp through prime staffing partners or direct corporate agreements. Contractor back-office deliverables are billed on transparent, fixed-scope project or monthly retainers.",
   },
 ];
 
 export default function HomePage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <div className="min-h-screen bg-mesh">
-
-      {/* ===== HERO ===== */}
-      <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-20 overflow-hidden">
-        {/* Background Stack Visual */}
-        <AgenticStackVisual />
-
-        <div className="section-container !py-0 relative z-10">
-          <div className="max-w-3xl">
-            {/* Badge */}
-            <motion.div
-              className="badge badge-active mb-6"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Layers className="w-4 h-4" />
-              <span>Agentic Intelligence Studio</span>
-            </motion.div>
-
-            {/* Animated Headline */}
-            <AnimatedTitle />
-
-            {/* Subhead */}
-            <motion.p
-              className="text-body-lg text-text-secondary mb-10 max-w-2xl"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2.5 }}
-            >
-              We turn paperwork bottlenecks into 48-hour turnarounds. AI systems that read,
-              analyze, and verify, so you can decide faster.
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2.8 }}
-            >
-              <button
-                onClick={() => document.getElementById('architecture')?.scrollIntoView({ behavior: 'smooth' })}
-                className="btn-primary"
-              >
-                Explore Architecture
-                <ArrowRight className="w-4 h-4" />
-              </button>
-              <Link href="/access">
-                <button className="btn-secondary">
-                  Request Feasibility Study
-                </button>
-              </Link>
-            </motion.div>
-
-            {/* Protocol Badges */}
-            <motion.div
-              className="flex flex-wrap gap-3 mt-12 pt-8 border-t border-glass-border"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 3.1 }}
-            >
-              {protocols.map((p) => (
-                <div key={p.name} className="badge">
-                  <Code className="w-3.5 h-3.5" />
-                  <span>{p.name}</span>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ARCHITECTURE PILLARS ===== */}
-      <section id="architecture" className="section-alt py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12 lg:mb-16"
-          >
-            <div className="font-section mb-4">The Architecture</div>
-            <h2 className="font-heading text-headline mb-4 text-balance">
-              Agentic RAG. Sovereign Context.
-            </h2>
-            <p className="text-body-lg text-text-secondary max-w-2xl mx-auto">
-              Beyond static retrieval. Agents that perceive, decide, and act across your enterprise knowledge.
-            </p>
-          </motion.div>
-
-          <div className="grid-3">
-            {pillars.map((pillar, index) => (
-              <motion.div
-                key={pillar.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="feature-card"
-              >
-                <div className="w-12 h-12 rounded-xl bg-accent-blue/10 flex items-center justify-center mb-5">
-                  <pillar.icon className="w-6 h-6 text-accent-blue" />
-                </div>
-                <h3 className="font-heading text-title mb-3">
-                  {pillar.title}
-                </h3>
-                <p className="text-text-secondary leading-relaxed">
-                  {pillar.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== STATS / NUMBERS SECTION ===== */}
-      <section className="py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="font-section mb-4">Measurable Impact</div>
-            <h2 className="font-heading text-headline">
-              Results That Matter
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {[
-              { value: 80, suffix: "%", label: "Time Saved", desc: "On document processing", decimals: 0 },
-              { value: 99.2, suffix: "%", label: "Accuracy", desc: "With human-in-the-loop", decimals: 1 },
-              { value: 60, suffix: "%", label: "Cost Reduction", desc: "Vs. manual workflows", decimals: 0 },
-              { value: 48, suffix: "h", label: "Feasibility", desc: "Inquiry to architecture", decimals: 0 },
-            ].map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{
-                  duration: 0.6,
-                  delay: index * 0.15,
-                  type: "spring",
-                  stiffness: 100
-                }}
-                viewport={{ once: true }}
-                className="text-center group"
-              >
+    <div className="min-h-screen bg-white text-slate-950">
+      {/* ===== SECTION 1: HERO (ABOVE THE FOLD) ===== */}
+      <section className="relative bg-architectural-grid border-b border-slate-200/90 overflow-hidden">
+        <div className="bg-radial-fade">
+          <div className="section-container py-12 sm:py-16 lg:py-24">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+              {/* Primary Hero Column */}
+              <div className="lg:col-span-8 space-y-6 sm:space-y-8">
+                {/* Eyebrow Badge */}
                 <motion.div
-                  className="font-heading text-6xl md:text-7xl lg:text-8xl text-transparent bg-clip-text bg-gradient-to-br from-accent-blue via-accent-blue to-accent-emerald mb-3"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.15 + 0.2 }}
-                  viewport={{ once: true }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="badge-institutional"
                 >
-                  <CountUp
-                    end={stat.value}
-                    suffix={stat.suffix}
-                    decimals={stat.decimals}
-                    duration={2 + index * 0.3}
-                  />
-                </motion.div>
-                <div className="font-heading text-lg text-text-primary mb-1">
-                  {stat.label}
-                </div>
-                <div className="text-text-tertiary text-sm">
-                  {stat.desc}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== R&D STATUS TICKER ===== */}
-      <LiveDataTicker />
-
-      {/* ===== MCP & A2A SECTION ===== */}
-      <section className="py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <div className="grid-2 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="font-section mb-4">Protocol Integration</div>
-              <h2 className="font-heading text-headline mb-6">
-                MCP + A2A Native
-              </h2>
-              <p className="text-body-lg text-text-secondary mb-8">
-                <strong className="text-text-primary">Model Context Protocol</strong> standardizes
-                how AI interacts with your tools and data. Combined with <strong className="text-text-primary">A2A Protocol</strong>,
-                your agents can communicate across platforms—regardless of vendor.
-              </p>
-
-              <div className="space-y-4">
-                {[
-                  { icon: Zap, text: "Eliminate 1,200+ daily context switches" },
-                  { icon: Code, text: "Standardized tool integration via MCP" },
-                  { icon: Network, text: "Agent interoperability via A2A" },
-                  { icon: Shield, text: "Enterprise-grade security by design" },
-                ].map((item, i) => (
-                  <motion.div
-                    key={item.text}
-                    initial={{ opacity: 0, x: -16 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: i * 0.1 }}
-                    viewport={{ once: true }}
-                    className="flex items-center gap-4"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-accent-blue/10 flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-5 h-5 text-accent-blue" />
-                    </div>
-                    <span className="text-text-primary font-medium">{item.text}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="glass-card-light p-6 lg:p-8 glow-blue"
-            >
-              <div className="font-terminal text-text-tertiary text-xs mb-6">
-                CONTEXT_PROTOCOL_FLOW
-              </div>
-              <div className="space-y-3">
-                {[
-                  { step: "01", label: "MCP HOST", desc: "AI application environment", color: "text-accent-blue" },
-                  { step: "02", label: "MCP CLIENT", desc: "Protocol translator", color: "text-accent-blue" },
-                  { step: "03", label: "MCP SERVER", desc: "External context provider", color: "text-accent-violet" },
-                  { step: "04", label: "A2A DISCOVERY", desc: "Agent capability cards", color: "text-accent-amber" },
-                  { step: "05", label: "TASK EXECUTION", desc: "Multi-agent coordination", color: "text-accent-emerald" },
-                ].map((item, i) => (
-                  <div
-                    key={item.step}
-                    className="flex items-center gap-4 p-3 rounded-lg bg-bg-surface"
-                  >
-                    <div className={`font-terminal text-sm font-bold ${item.color}`}>
-                      {item.step}
-                    </div>
-                    <div className="flex-1">
-                      <div className={`font-terminal text-xs font-semibold ${item.color}`}>{item.label}</div>
-                      <div className="text-text-tertiary text-xs">{item.desc}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ZONE IQ SHOWCASE ===== */}
-      <section className="section-alt py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <div className="font-section mb-4">Reference Architecture</div>
-            <h2 className="font-heading text-headline mb-4">
-              Zone IQ™
-            </h2>
-            <p className="text-body-lg text-text-secondary max-w-2xl mx-auto">
-              Multi-agent geospatial reasoning for pre-construction risk analysis.
-              Cross-referencing 400+ municipal bylaws in milliseconds.
-            </p>
-          </motion.div>
-
-          <div className="grid-2">
-            {zoneIQCapabilities.map((cap, i) => (
-              <motion.div
-                key={cap.label}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="surface-card p-6 flex items-start gap-4"
-              >
-                <div className="w-8 h-8 rounded-full bg-accent-emerald/10 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-4 h-4 text-accent-emerald" />
-                </div>
-                <div>
-                  <div className="font-heading text-lg text-text-primary mb-1">
-                    {cap.label}
-                  </div>
-                  <div className="text-text-secondary text-sm">
-                    {cap.desc}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            className="text-center mt-10"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <Link href="/protocols">
-              <button className="btn-ghost">
-                View Full Architecture
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ===== THE STUDIO ===== */}
-      <section className="section-dark-elegant py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <div className="max-w-3xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-center mb-10"
-            >
-              <div className="font-section mb-4 !text-accent-blue">About ESInnov</div>
-              <h2 className="font-heading text-headline !text-white">
-                AI That Works.<br />
-                Results You Can Measure.
-              </h2>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="glass-card-dark p-8 lg:p-10"
-            >
-              <div className="space-y-5 text-muted text-body-lg leading-relaxed">
-                <p>
-                  ESInnov builds <strong className="text-white">practical AI systems</strong> that automate
-                  complex, time consuming work in your business. We take what's possible with modern AI and
-                  turn it into tools you can actually use, today.
-                </p>
-                <p>
-                  We focus on what matters to you: <strong className="text-white">saving time</strong>,
-                  <strong className="text-white"> reducing costs</strong>, and
-                  <strong className="text-white"> getting more done</strong> with fewer resources.
-                </p>
-                <div className="pt-4 space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-accent-emerald mt-2 flex-shrink-0" />
-                    <span>We deploy systems that are <strong className="text-white">proven and production ready</strong>, not experiments</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-accent-emerald mt-2 flex-shrink-0" />
-                    <span>We measure success by <strong className="text-white">real outcomes</strong>: hours saved, errors reduced, decisions accelerated</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full bg-accent-emerald mt-2 flex-shrink-0" />
-                    <span>Your team stays in control with <strong className="text-white">human review</strong> on every critical decision</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== FAQ ===== */}
-      <section className="section-alt py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <div className="font-section mb-4">Common Questions</div>
-            <h2 className="font-heading text-headline">FAQs</h2>
-          </motion.div>
-
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className="surface-card overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full flex items-center justify-between p-5 lg:p-6 text-left"
-                >
-                  <span className="font-heading text-lg text-text-primary pr-4">
-                    {faq.q}
+                  <span className="w-2 h-2 rounded-full bg-emerald-600" />
+                  <span>
+                    Calgary Operations &amp; Industrial Systems Boutique • Active Capacity
                   </span>
-                  <motion.div
-                    animate={{ rotate: openFaq === index ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronDown className="w-5 h-5 text-accent-blue flex-shrink-0" />
-                  </motion.div>
-                </button>
+                </motion.div>
 
-                <AnimatePresence>
-                  {openFaq === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 lg:px-6 pb-5 lg:pb-6">
-                        <div className="border-t border-glass-border pt-4">
-                          <p className="text-text-secondary leading-relaxed">
-                            {faq.a}
-                          </p>
+                {/* H1 Headline */}
+                <motion.h1
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.05 }}
+                  className="font-heading text-display text-slate-950 text-balance"
+                >
+                  Embedded operations and program delivery for industrial teams.
+                </motion.h1>
+
+                {/* Subheadline */}
+                <motion.p
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1 }}
+                  className="text-body-lg text-slate-600 max-w-3xl"
+                >
+                  EcoSync Innovations Inc. (ESInnov) deploys senior operational
+                  leadership into industrial organizations for 3–6 month NPI,
+                  program delivery, and operational turnaround mandates —
+                  structured via prime staffing partners or direct corporate
+                  engagement.
+                </motion.p>
+
+                {/* Credibility Callout Box (Monospace) */}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="callout-monospace max-w-3xl"
+                >
+                  Backed by 10+ years of senior industrial engineering and supply
+                  chain leadership across commercial power electronics, $5M+ IoT
+                  platforms, heavy steel, pharmaceutical distribution, and
+                  automotive manufacturing.
+                </motion.div>
+
+                {/* Hero CTAs */}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2"
+                >
+                  <a
+                    href="mailto:info@esinnov.com?subject=Contract%20Operations%20%26%20Program%20Delivery"
+                    className="btn-primary !w-full sm:!w-auto"
+                  >
+                    <span>Request Delivery Capacity</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="#engagement-model"
+                    className="btn-secondary !w-full sm:!w-auto"
+                  >
+                    <span>Review Engagement Model</span>
+                    <ArrowRight className="w-4 h-4 text-slate-500" />
+                  </a>
+                </motion.div>
+              </div>
+
+              {/* Right Column: Institutional Mandate Specifications Ledger */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.15 }}
+                className="lg:col-span-4 w-full"
+              >
+                <div className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-7 shadow-sm">
+                  <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
+                    <span className="font-terminal text-xs uppercase tracking-wider text-slate-500 font-semibold">
+                      MANDATE SPECIFICATIONS
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-terminal text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                      ACTIVE DESK
+                    </span>
+                  </div>
+
+                  <div className="space-y-4">
+                    {[
+                      {
+                        label: "DEPLOYMENT HORIZON",
+                        value: "3–6 Month Fixed-Term Mandates",
+                        sub: "NPI, Turnaround & Interim Coverage",
+                      },
+                      {
+                        label: "CONTRACTING STRUCTURE",
+                        value: "Prime Staffing MSA or Direct C2C",
+                        sub: "Zero procurement or onboarding friction",
+                      },
+                      {
+                        label: "EXECUTION ENVIRONMENT",
+                        value: "100% Client ERP / PLM Native",
+                        sub: "SAP • NetSuite • Arena PLM • Power BI",
+                      },
+                      {
+                        label: "PRINCIPAL LEADERSHIP",
+                        value: "Aidin VM, MSc Ind. Systems Eng.",
+                        sub: "Calgary, AB • Hybrid & Western Canada",
+                      },
+                    ].map((spec) => (
+                      <div
+                        key={spec.label}
+                        className="p-3.5 rounded-lg bg-slate-50/80 border border-slate-100"
+                      >
+                        <div className="font-terminal text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">
+                          {spec.label}
+                        </div>
+                        <div className="font-heading text-sm font-semibold text-slate-900">
+                          {spec.value}
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          {spec.sub}
                         </div>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span>Dual-Track Practice</span>
+                    <a
+                      href="#contractors"
+                      className="font-terminal text-[#0052CC] font-medium hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>Back-Office Division</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 2: SECTOR AUTHORITY STRIP ===== */}
+      <section className="bg-slate-50/70 border-b border-slate-200/90">
+        <div className="section-container py-8 sm:py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-0 lg:divide-x lg:divide-slate-200/90">
+            {sectorAuthority.map((item) => (
+              <div
+                key={item.sector}
+                className="bg-white lg:bg-transparent p-4 sm:p-5 lg:px-6 lg:py-2 rounded-lg lg:rounded-none border border-slate-200/80 lg:border-0 first:lg:pl-0 last:lg:pr-0"
+              >
+                <div className="font-terminal text-[11px] text-[#0052CC] font-semibold mb-1">
+                  DOMAIN // {item.index}
+                </div>
+                <div className="font-heading text-base font-semibold text-slate-950">
+                  {item.sector}
+                </div>
+                <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
+                  {item.scope}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 3: ENGAGEMENT ARCHITECTURE (#engagement-model) ===== */}
+      <section
+        id="engagement-model"
+        className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <div className="eyebrow-label mb-3">ENGAGEMENT ARCHITECTURE</div>
+            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
+              Seamless integration via prime staffing and consulting partners.
+            </h2>
+            <p className="text-body-lg text-slate-600">
+              ESInnov operates as an agile corporate delivery partner. We
+              integrate directly through established Calgary staffing and
+              engineering firms under existing Master Services Agreements (MSAs)
+              and strict NDAs—eliminating procurement friction.
+            </p>
+          </div>
+
+          {/* 3-Step Execution Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {engagementSteps.map((card, i) => (
+              <motion.div
+                key={card.step}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.08 }}
+                className="institutional-card p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="font-terminal text-2xl sm:text-3xl font-bold text-[#0052CC]">
+                      {card.step}
+                    </span>
+                    <span className="font-terminal text-[11px] uppercase tracking-wider px-2.5 py-1 rounded bg-slate-100 text-slate-600 font-medium">
+                      {card.tag}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-title text-slate-950 mb-3">
+                    {card.title}
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
+                    {card.desc}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-terminal text-slate-400">
+                  <span>STEP {card.step} OF 03</span>
+                  <ShieldCheck className="w-4 h-4 text-slate-400" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Closing Anchor & CTA */}
+          <div className="mt-10 sm:mt-12 p-6 sm:p-8 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-1">
+              <div className="font-terminal text-xs uppercase tracking-wider text-[#0052CC] font-semibold">
+                CORP-TO-CORP DELIVERY STANDARD
+              </div>
+              <p className="font-heading text-base sm:text-lg text-slate-900">
+                Structured exclusively for fixed-term contract delivery and
+                operational execution.
+              </p>
+            </div>
+            <a
+              href="mailto:info@esinnov.com?subject=Prime%20Partner%20Vendor%20Onboarding"
+              className="btn-primary !w-full md:!w-auto flex-shrink-0"
+            >
+              <span>Initiate Partner Onboarding</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 4: CORE PRACTICE AREAS (#services) ===== */}
+      <section
+        id="services"
+        className="py-16 sm:py-20 lg:py-28 bg-slate-50/60 border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <div className="eyebrow-label mb-3">CORE PRACTICE AREAS</div>
+            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
+              Targeted execution mandates. Senior industrial rigor.
+            </h2>
+            <p className="text-body-lg text-slate-600">
+              We step into high-friction environments where organizations require
+              an experienced operator to stabilize execution rather than deliver
+              theoretical slide decks.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            {practiceAreas.map((practice, i) => (
+              <motion.div
+                key={practice.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.08 }}
+                className="institutional-card-interactive p-6 sm:p-8 flex flex-col justify-between bg-white"
+              >
+                <div>
+                  <div className="font-terminal text-xs text-[#0052CC] font-semibold mb-3">
+                    {practice.code}
+                  </div>
+                  <h3 className="font-heading text-xl sm:text-2xl text-slate-950 mb-3">
+                    {practice.title}
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed mb-6">
+                    {practice.desc}
+                  </p>
+
+                  <div className="border-t border-slate-100 pt-5 mb-6">
+                    <div className="font-terminal text-[11px] uppercase tracking-wider text-slate-400 mb-3.5">
+                      KEY DELIVERABLES
+                    </div>
+                    <ul className="space-y-3">
+                      {practice.deliverables.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-2.5 text-sm text-slate-700 leading-snug"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-[#0052CC] flex-shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <a
+                    href={`mailto:info@esinnov.com?subject=${practice.subject}`}
+                    className="link-action"
+                  >
+                    <span>{practice.ctaLabel}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ===== CTA ===== */}
-      <section className="section-dark py-20 lg:py-28">
-        <div className="section-container !py-0">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <div className="font-section mb-4 !text-accent-emerald">Get Started</div>
-            <h2 className="font-heading text-headline mb-6 !text-white">
-              Ready to Build?
+      {/* ===== SECTION 5: SECTOR PEDIGREE (#proof) ===== */}
+      <section
+        id="proof"
+        className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <div className="eyebrow-label mb-3">SECTOR PEDIGREE</div>
+            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
+              Verified industrial domain experience.
             </h2>
-            <p className="text-body-lg text-muted mb-10">
-              Share your use case. We&apos;ll assess architecture fit and
-              deliver a feasibility study within 48 hours.
+            <p className="text-body-lg text-slate-600">
+              Our practice is built on a decade of direct operational
+              accountability across complex manufacturing, distribution, and
+              technology sectors.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/access">
-                <button className="btn-primary">
-                  <Send className="w-4 h-4" />
-                  Request Feasibility Study
-                </button>
-              </Link>
-              <Link href="/methodology">
-                <button className="btn-secondary-light">
-                  View Methodology
-                </button>
-              </Link>
+          </div>
+
+          {/* Anonymized Domain Timeline */}
+          <div className="border-t border-slate-200">
+            {pedigreeTimeline.map((item, idx) => (
+              <motion.div
+                key={item.domain}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: idx * 0.06 }}
+                className="py-7 sm:py-8 border-b border-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start hover:bg-slate-50/60 transition-colors px-2 sm:px-4 -mx-2 sm:-mx-4 rounded-lg"
+              >
+                <div className="lg:col-span-4 space-y-1.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <span className="font-terminal text-xs font-semibold text-[#0052CC]">
+                      0{idx + 1}
+                    </span>
+                    <h3 className="font-heading text-lg text-slate-950">
+                      {item.domain}
+                    </h3>
+                  </div>
+                  <div>
+                    <span className="inline-block font-terminal text-[11px] uppercase tracking-wider px-2.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                      {item.badge}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-8 space-y-2">
+                  <div className="font-heading text-base font-semibold text-slate-900">
+                    {item.role}
+                  </div>
+                  <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
+                    {item.summary}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Enterprise Stack Strip */}
+          <div className="mt-10 sm:mt-12 p-5 sm:p-6 rounded-xl bg-slate-50 border border-slate-200/90">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <span className="font-terminal text-xs uppercase tracking-wider text-slate-500 font-semibold flex-shrink-0">
+                ENTERPRISE STACK &amp; METHODOLOGIES:
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {enterpriseStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-3 py-1.5 rounded-md bg-white border border-slate-200 font-terminal text-xs font-medium text-slate-800 shadow-2xs"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
             </div>
-          </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 6: COMMERCIAL BACK-OFFICE DIVISION (#contractors) ===== */}
+      <section
+        id="contractors"
+        className="py-16 sm:py-20 lg:py-28 bg-slate-50/70 border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <div className="eyebrow-label mb-3">
+              COMMERCIAL BACK-OFFICE DIVISION
+            </div>
+            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
+              Productized back-office execution for regional contractors.
+            </h2>
+            <p className="text-body-lg text-slate-600">
+              Dedicated remote administrative, compliance, and estimating support
+              for Calgary trades and general contractors. Fixed-scope
+              deliverables, rapid turnaround, zero overhead.
+            </p>
+          </div>
+
+          {/* 6 Productized Micro-Service Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {backOfficeServices.map((service, i) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className="institutional-card-interactive p-6 sm:p-7 bg-white flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+                    <span className="font-terminal text-[11px] text-slate-400">
+                      DESK // 0{i + 1}
+                    </span>
+                    <span className="price-tag">{service.price}</span>
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl text-slate-950 mb-2.5">
+                    {service.title}
+                  </h3>
+                  <p className="text-slate-600 text-sm leading-relaxed mb-6">
+                    {service.desc}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <a
+                    href={`mailto:info@esinnov.com?subject=${service.subject}`}
+                    className="link-action"
+                  >
+                    <span>{service.cta}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 7: APPLIED AUTOMATION CAPABILITY (#ai-capability) ===== */}
+      <section
+        id="ai-capability"
+        className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            <div className="lg:col-span-5 space-y-5">
+              <div className="eyebrow-label">APPLIED AUTOMATION</div>
+              <h2 className="font-heading text-headline text-slate-950 text-balance">
+                Pragmatic workflow automation integrated into operations.
+              </h2>
+              <p className="text-body-lg text-slate-600">
+                ESInnov deploys targeted automation scripts and human-in-the-loop
+                AI workflows to eliminate repetitive administrative
+                bottlenecks—including document verification, ERP data extraction,
+                compliance auditing, and automated reporting. Systems are
+                deployed strictly inside client-controlled infrastructure with
+                zero external data retention.
+              </p>
+              <div className="pt-2">
+                <a
+                  href="mailto:info@esinnov.com?subject=Applied%20Workflow%20Automation%20Inquiry"
+                  className="link-action !text-base"
+                >
+                  <span>Inquire about applied automation</span>
+                  <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {automationPillars.map((pillar, i) => (
+                <motion.div
+                  key={pillar.title}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.35, delay: i * 0.08 }}
+                  className="institutional-card p-6 bg-slate-50/50 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="w-10 h-10 rounded-lg bg-[#0052CC]/10 border border-[#0052CC]/20 flex items-center justify-center mb-5">
+                      <pillar.icon className="w-5 h-5 text-[#0052CC]" />
+                    </div>
+                    <h3 className="font-heading text-base sm:text-lg text-slate-950 mb-2">
+                      {pillar.title}
+                    </h3>
+                    <p className="text-slate-600 text-sm leading-relaxed">
+                      {pillar.desc}
+                    </p>
+                  </div>
+                  <div className="mt-6 pt-3 border-t border-slate-200/70 font-terminal text-[11px] text-slate-400">
+                    GOVERNED EXECUTION
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 8: CORPORATE PROFILE (#about) ===== */}
+      <section
+        id="about"
+        className="py-16 sm:py-20 lg:py-28 bg-slate-50/70 border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            <div className="lg:col-span-5 space-y-4">
+              <div className="eyebrow-label">CORPORATE PROFILE</div>
+              <h2 className="font-heading text-headline text-slate-950 text-balance">
+                Industrial rigor. Boutique agility.
+              </h2>
+              <div className="p-5 rounded-xl bg-white border border-slate-200/90 space-y-3 mt-6">
+                <div className="font-terminal text-xs uppercase tracking-wider text-[#0052CC] font-semibold">
+                  PRINCIPAL LEADERSHIP
+                </div>
+                <div className="font-heading text-lg text-slate-950">
+                  Aidin VM — Principal Consultant
+                </div>
+                <div className="text-xs font-terminal text-slate-500">
+                  MSc Industrial Systems Engineering
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  10+ years directing industrial operations, NPI governance, and
+                  enterprise program delivery across complex manufacturing and
+                  supply chain environments.
+                </p>
+              </div>
+            </div>
+
+            <div className="lg:col-span-7 space-y-6">
+              <div className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-9 space-y-5 text-slate-700 text-base sm:text-[17px] leading-relaxed shadow-xs">
+                <p>
+                  <strong className="text-slate-950 font-semibold">
+                    EcoSync Innovations Inc. (ESInnov)
+                  </strong>{" "}
+                  is an operations and systems engineering boutique headquartered
+                  in Calgary. Led by Principal Consultant Aidin VM (MSc
+                  Industrial Systems Engineering), the firm bridges the gap
+                  between high-level strategic planning and floor-level
+                  operational execution.
+                </p>
+                <p>
+                  Rather than operating as a traditional management consultancy
+                  that leaves behind theoretical recommendations, ESInnov embeds
+                  directly into client teams for fixed-term mandates—stabilizing
+                  new product introductions, untangling supply chain bottlenecks,
+                  and building resilient administrative workflows.
+                </p>
+                <p>
+                  Through our dedicated Commercial Back-Office division, we
+                  extend this same systematic discipline to regional contractors,
+                  removing compliance, estimating, and administrative friction so
+                  business owners can focus on field execution.
+                </p>
+              </div>
+
+              {/* Institutional Profile Strip */}
+              <div className="p-4 sm:p-5 rounded-lg bg-[#090D16] text-white font-terminal text-xs flex flex-wrap items-center justify-between gap-3">
+                <span>EcoSync Innovations Inc. (ESInnov)</span>
+                <span className="text-slate-500 hidden sm:inline">•</span>
+                <span className="text-slate-300">Calgary, Alberta</span>
+                <span className="text-slate-500 hidden sm:inline">•</span>
+                <span className="text-emerald-400">
+                  Corp-to-Corp &amp; Staffing Partner Ready
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 9: DIRECT ENGAGEMENT & FAQ (#contact) ===== */}
+      <section id="contact" className="py-16 sm:py-20 lg:py-28 bg-white">
+        <div className="section-container">
+          {/* Direct Engagement Card */}
+          <div className="rounded-2xl bg-slate-50 border border-slate-200/90 p-6 sm:p-10 lg:p-12 mb-16 lg:mb-24">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-8 space-y-4">
+                <div className="eyebrow-label">DIRECT ENGAGEMENT</div>
+                <h2 className="font-heading text-headline text-slate-950 text-balance">
+                  Initiate a mandate or partner onboarding.
+                </h2>
+                <p className="text-body-lg text-slate-600 max-w-2xl">
+                  For staffing partners and industrial operations leaders seeking
+                  interim program or operations management, contact our advisory
+                  desk with mandate scope and timeline. For commercial
+                  contractors seeking takeoff, ISNetworld, or bookkeeping
+                  support, submit your project specifications for same-day
+                  review.
+                </p>
+                <p className="text-xs font-terminal text-slate-500 pt-2">
+                  Calgary, Alberta • Hybrid &amp; Travel Capable • Commercial
+                  terms provided upon scope review. Strict confidentiality
+                  maintained under prime partner MSAs and corporate NDAs.
+                </p>
+              </div>
+
+              <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-stretch gap-3">
+                <a
+                  href="mailto:info@esinnov.com?subject=ESInnov%20Engagement%20Inquiry"
+                  className="btn-primary !py-4 !px-6 !text-base w-full"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Contact Advisory Desk</span>
+                </a>
+                <div className="text-center font-terminal text-xs text-slate-500 py-1">
+                  Direct Dispatch:{" "}
+                  <a
+                    href="mailto:info@esinnov.com"
+                    className="text-slate-900 font-semibold hover:text-[#0052CC]"
+                  >
+                    info@esinnov.com
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Institutional FAQ Accordion */}
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-8 sm:mb-10">
+              <div className="eyebrow-label mb-2">INSTITUTIONAL GOVERNANCE</div>
+              <h3 className="font-heading text-2xl sm:text-3xl text-slate-950">
+                Frequently Asked Questions
+              </h3>
+            </div>
+
+            <div className="divide-y divide-slate-200 border-t border-b border-slate-200">
+              {faqs.map((faq, index) => {
+                const isOpen = openFaq === index;
+                return (
+                  <div key={faq.q} className="py-1">
+                    <button
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
+                      className="w-full py-5 flex items-center justify-between gap-4 text-left group focus:outline-none"
+                      aria-expanded={isOpen}
+                    >
+                      <div className="flex items-baseline gap-3 sm:gap-4">
+                        <span className="font-terminal text-xs text-[#0052CC] font-semibold">
+                          0{index + 1}
+                        </span>
+                        <span className="font-heading text-base sm:text-lg text-slate-950 group-hover:text-[#0052CC] transition-colors">
+                          {faq.q}
+                        </span>
+                      </div>
+                      <ChevronDown
+                        className={`w-5 h-5 text-slate-400 flex-shrink-0 transition-transform duration-200 ${
+                          isOpen ? "rotate-180 text-[#0052CC]" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pb-6 pl-7 sm:pl-9 pr-4 text-slate-600 text-sm sm:text-[15px] leading-relaxed">
+                            {faq.a}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
     </div>

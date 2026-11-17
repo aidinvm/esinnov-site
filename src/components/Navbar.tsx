@@ -1,187 +1,172 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 
 const navLinks = [
-    { href: "/protocols", label: "Architecture" },
-    { href: "/methodology", label: "Methodology" },
-    { href: "/research", label: "Research" },
-    { href: "/about", label: "About" },
+  { href: "#services", label: "Embedded Ops", index: "01" },
+  { href: "#engagement-model", label: "Engagement Model", index: "02" },
+  { href: "#proof", label: "Sector Pedigree", index: "03" },
+  { href: "#contractors", label: "Commercial Back-Office", index: "04" },
+  { href: "#ai-capability", label: "Applied Automation", index: "05" },
+  { href: "#about", label: "Corporate Profile", index: "06" },
 ];
 
-// Hamburger icon animation variants
-const topLine: Variants = {
-    closed: { rotate: 0, y: 0 },
-    open: { rotate: 45, y: 6 }
-};
-
-const middleLine: Variants = {
-    closed: { opacity: 1, x: 0 },
-    open: { opacity: 0, x: -20 }
-};
-
-const bottomLine: Variants = {
-    closed: { rotate: 0, y: 0 },
-    open: { rotate: -45, y: -6 }
-};
-
-// Menu animation variants
-const menuVariants: Variants = {
-    closed: {
-        opacity: 0,
-        transition: { duration: 0.3, ease: "easeInOut" }
-    },
-    open: {
-        opacity: 1,
-        transition: { duration: 0.3, ease: "easeInOut" }
-    }
-};
-
-const linkVariants: Variants = {
-    closed: { opacity: 0, y: 20 },
-    open: (i: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: { delay: 0.1 + i * 0.1, duration: 0.4, ease: "easeOut" }
-    })
-};
-
-
 export default function Navbar() {
-    const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-    return (
-        <>
-            <motion.nav
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-                className="fixed top-0 left-0 right-0 z-50 bg-bg-primary/95 backdrop-blur-lg border-b border-glass-border w-full overflow-hidden"
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 12);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 w-full">
+      {/* Top Institutional Status Bar */}
+      <div className="bg-[#090D16] text-white border-b border-white/10">
+        <div className="section-container h-8 flex items-center justify-between text-[11px] font-terminal tracking-wider uppercase">
+          <div className="flex items-center gap-2 truncate">
+            <span className="text-slate-300 font-semibold">CALGARY, AB</span>
+            <span className="text-slate-600 hidden sm:inline">•</span>
+            <span className="text-slate-400 hidden sm:inline truncate">
+              INDUSTRIAL OPERATIONS &amp; PROGRAM DELIVERY
+            </span>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-300 font-medium">
+              IMMEDIATE DEPLOYMENT CAPACITY
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Primary Navigation Bar */}
+      <div
+        className={`w-full transition-all duration-200 ${
+          scrolled
+            ? "bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs"
+            : "bg-white/90 backdrop-blur-sm border-b border-slate-200/70"
+        }`}
+      >
+        <div className="section-container h-16 sm:h-[68px] flex items-center justify-between gap-4">
+          {/* Brand Mark: ES | ESINNOV (EcoSync Innovations Inc.) */}
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 group focus:outline-none"
+          >
+            <div className="w-9 h-9 rounded-lg bg-[#090D16] text-white flex items-center justify-center font-terminal text-sm font-bold tracking-tight border border-slate-800 group-hover:bg-[#0052CC] group-hover:border-[#0052CC] transition-colors">
+              ES
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="font-heading text-base sm:text-[17px] font-bold tracking-tight text-slate-950 leading-none">
+                  ESINNOV
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-500 font-medium tracking-tight leading-tight mt-0.5">
+                EcoSync Innovations Inc.
+              </span>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden xl:flex items-center gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-[13.5px] font-medium text-slate-600 hover:text-slate-950 transition-colors py-1"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Desktop Primary CTA */}
+          <div className="hidden sm:flex items-center gap-3">
+            <a
+              href="mailto:info@esinnov.com?subject=ESInnov%20Engagement%20Inquiry"
+              className="btn-primary !py-2.5 !px-4 !text-xs sm:!text-[13px] !rounded-lg"
             >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center gap-3 z-50">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src="/logo.png"
-                            alt="ESInnov Logo"
-                            className="w-9 h-9 object-contain"
-                        />
-                        <span className="font-heading text-text-primary text-lg">ESInnov</span>
-                    </Link>
+              <span>Initiate Mandate</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className="text-text-secondary hover:text-text-primary transition-colors text-sm font-medium"
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </div>
+            {/* Tablet Menu Trigger (visible sm to xl) */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="xl:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
 
-                    {/* Desktop CTA */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <Link href="/access">
-                            <button className="btn-primary py-2.5 px-5 text-sm">Get Started</button>
-                        </Link>
-                    </div>
+          {/* Mobile Menu Trigger (visible below sm) */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="sm:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
 
-                    {/* Mobile Hamburger - Animated Icon */}
-                    <button
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                        className="md:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-                        aria-label="Toggle menu"
-                    >
-                        <motion.span
-                            variants={topLine}
-                            animate={mobileOpen ? "open" : "closed"}
-                            transition={{ duration: 0.3 }}
-                            className="block w-6 h-0.5 bg-text-primary origin-center"
-                        />
-                        <motion.span
-                            variants={middleLine}
-                            animate={mobileOpen ? "open" : "closed"}
-                            transition={{ duration: 0.2 }}
-                            className="block w-6 h-0.5 bg-text-primary"
-                        />
-                        <motion.span
-                            variants={bottomLine}
-                            animate={mobileOpen ? "open" : "closed"}
-                            transition={{ duration: 0.3 }}
-                            className="block w-6 h-0.5 bg-text-primary origin-center"
-                        />
-                    </button>
+      {/* Responsive Mobile & Tablet Drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="xl:hidden bg-white border-b border-slate-200 shadow-lg max-h-[calc(100vh-6rem)] overflow-y-auto"
+          >
+            <div className="section-container py-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between p-3.5 rounded-lg border border-slate-100 hover:border-slate-300 hover:bg-slate-50 transition-all"
+                  >
+                    <span className="font-heading text-sm font-semibold text-slate-900">
+                      {link.label}
+                    </span>
+                    <span className="font-terminal text-xs text-slate-400">
+                      {link.index}
+                    </span>
+                  </a>
+                ))}
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <div className="text-xs text-slate-500 font-terminal">
+                  ADVISORY DESK: <span className="text-slate-900 font-semibold">info@esinnov.com</span>
                 </div>
-            </motion.nav>
-
-            {/* Fullscreen Mobile Menu */}
-            <AnimatePresence>
-                {mobileOpen && (
-                    <motion.div
-                        variants={menuVariants}
-                        initial="closed"
-                        animate="open"
-                        exit="closed"
-                        className="fixed inset-0 z-40 bg-bg-primary md:hidden"
-                    >
-                        <div className="flex flex-col items-center justify-center h-full px-8">
-                            <nav className="flex flex-col items-center gap-8">
-                                {navLinks.map((link, i) => (
-                                    <motion.div
-                                        key={link.href}
-                                        custom={i}
-                                        variants={linkVariants}
-                                        initial="closed"
-                                        animate="open"
-                                        exit="closed"
-                                    >
-                                        <Link
-                                            href={link.href}
-                                            onClick={() => setMobileOpen(false)}
-                                            className="font-heading text-3xl text-text-primary hover:text-accent-blue transition-colors"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </motion.div>
-                                ))}
-
-                                <motion.div
-                                    custom={navLinks.length}
-                                    variants={linkVariants}
-                                    initial="closed"
-                                    animate="open"
-                                    exit="closed"
-                                    className="mt-8"
-                                >
-                                    <Link href="/access" onClick={() => setMobileOpen(false)}>
-                                        <button className="btn-primary text-lg px-8 py-4">
-                                            Get Started
-                                        </button>
-                                    </Link>
-                                </motion.div>
-                            </nav>
-
-                            {/* Branding at bottom */}
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className="absolute bottom-10 text-center"
-                            >
-                                <p className="text-text-tertiary text-sm">
-                                    Agentic Intelligence Studio
-                                </p>
-                            </motion.div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </>
-    );
+                <a
+                  href="mailto:info@esinnov.com?subject=ESInnov%20Engagement%20Inquiry"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn-primary !w-full sm:!w-auto !py-3 !px-5 !text-sm"
+                >
+                  <span>Initiate Mandate</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
 }
