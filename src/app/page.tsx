@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -13,6 +13,8 @@ import {
   Database,
   Lock,
   Mail,
+  Copy,
+  Check,
 } from "lucide-react";
 
 const executiveAuthority = [
@@ -191,6 +193,29 @@ const governanceFaqs = [
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const scrollToSection = (
+    e: MouseEvent<HTMLAnchorElement>,
+    selector: string
+  ) => {
+    e.preventDefault();
+    const target = document.querySelector(selector);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+    window.history.pushState(null, "", selector);
+  };
+
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("info@esinnov.com");
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2500);
+    } catch {
+      window.location.href = "mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-slate-950">
@@ -255,6 +280,7 @@ export default function HomePage() {
                   </a>
                   <a
                     href="#engagement-model"
+                    onClick={(e) => scrollToSection(e, "#engagement-model")}
                     className="btn-secondary !w-full sm:!w-auto"
                   >
                     <span>Review Engagement Model</span>
@@ -325,6 +351,7 @@ export default function HomePage() {
                     <span>Dual-Capability Advisory</span>
                     <a
                       href="#applied-systems"
+                      onClick={(e) => scrollToSection(e, "#applied-systems")}
                       className="font-terminal text-[#0052CC] font-medium hover:underline inline-flex items-center gap-1"
                     >
                       <span>Applied Systems</span>
@@ -762,14 +789,34 @@ export default function HomePage() {
                   <Mail className="w-4 h-4" />
                   <span>Contact Advisory Desk</span>
                 </a>
-                <div className="text-center font-terminal text-xs text-slate-500 py-1">
-                  Direct Dispatch:{" "}
+                <div className="flex flex-wrap items-center justify-center gap-2 font-terminal text-xs text-slate-500 py-1">
+                  <span>Direct Dispatch:</span>
                   <a
                     href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
-                    className="text-slate-900 font-semibold hover:text-[#0052CC]"
+                    className="text-slate-900 font-semibold hover:text-[#0052CC] underline-offset-2 hover:underline"
                   >
                     info@esinnov.com
                   </a>
+                  <button
+                    type="button"
+                    onClick={handleCopyEmail}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors cursor-pointer"
+                    aria-label="Copy info@esinnov.com to clipboard"
+                  >
+                    {copiedEmail ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        <span className="text-emerald-700 font-medium">
+                          Copied to clipboard
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>

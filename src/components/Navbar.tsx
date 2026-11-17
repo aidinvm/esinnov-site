@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
@@ -24,6 +24,30 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    setMobileOpen(false);
+    if (window.location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.pushState(null, "", "/");
+    }
+  };
+
+  const handleAnchorClick = (
+    e: MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    setTimeout(() => {
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+      window.history.pushState(null, "", href);
+    }, 50);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full">
@@ -55,15 +79,18 @@ export default function Navbar() {
         }`}
       >
         <div className="section-container h-16 sm:h-[68px] flex items-center justify-between gap-4">
-          {/* Brand Mark: ES | ESINNOV (EcoSync Innovations Inc.) */}
+          {/* Brand Mark: Official ESInnov Logo | ESINNOV (EcoSync Innovations Inc.) */}
           <Link
             href="/"
-            onClick={() => setMobileOpen(false)}
+            onClick={handleLogoClick}
             className="flex items-center gap-3 group focus:outline-none flex-shrink-0"
           >
-            <div className="w-9 h-9 rounded-lg bg-[#090D16] text-white flex items-center justify-center font-terminal text-sm font-bold tracking-tight border border-slate-800 group-hover:bg-[#0052CC] group-hover:border-[#0052CC] transition-colors">
-              ES
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt="ESInnov Logo"
+              className="w-9 h-9 sm:w-10 sm:h-10 object-contain flex-shrink-0 transition-transform duration-200 group-hover:scale-[1.03]"
+            />
             <div className="flex flex-col">
               <span className="font-heading text-base sm:text-[17px] font-bold tracking-tight text-slate-950 leading-none">
                 ESINNOV
@@ -83,6 +110,7 @@ export default function Navbar() {
               <a
                 key={link.href}
                 href={link.href}
+                onClick={(e) => handleAnchorClick(e, link.href)}
                 className="text-[13px] xl:text-[13.5px] font-medium text-slate-600 hover:text-slate-950 transition-colors py-1 whitespace-nowrap"
               >
                 {link.label}
@@ -102,6 +130,7 @@ export default function Navbar() {
 
             {/* Tablet Menu Trigger (visible sm to lg) */}
             <button
+              type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
               className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
               aria-label="Toggle navigation menu"
@@ -113,6 +142,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Trigger (visible below sm) */}
           <button
+            type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
             className="sm:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
             aria-label="Toggle navigation menu"
@@ -139,7 +169,7 @@ export default function Navbar() {
                   <a
                     key={link.href}
                     href={link.href}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={(e) => handleAnchorClick(e, link.href)}
                     className="flex items-center justify-between p-3.5 rounded-lg border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 transition-all"
                   >
                     <span className="font-heading text-sm font-semibold text-slate-900">
