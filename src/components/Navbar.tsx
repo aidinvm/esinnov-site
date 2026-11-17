@@ -6,12 +6,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "#services", label: "Embedded Ops", index: "01" },
-  { href: "#engagement-model", label: "Engagement Model", index: "02" },
-  { href: "#proof", label: "Sector Pedigree", index: "03" },
-  { href: "#contractors", label: "Commercial Back-Office", index: "04" },
-  { href: "#ai-capability", label: "Applied Automation", index: "05" },
-  { href: "#about", label: "Corporate Profile", index: "06" },
+  { href: "#core-practices", label: "Core Practices", index: "01" },
+  { href: "#applied-systems", label: "Applied Systems", index: "02" },
+  { href: "#engagement-model", label: "Engagement Model", index: "03" },
+  { href: "#sector-pedigree", label: "Sector Pedigree", index: "04" },
+  { href: "#about-governance", label: "About & Governance", index: "05" },
 ];
 
 export default function Navbar() {
@@ -30,12 +29,12 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 w-full">
       {/* Top Institutional Status Bar */}
       <div className="bg-[#090D16] text-white border-b border-white/10">
-        <div className="section-container h-8 flex items-center justify-between text-[11px] font-terminal tracking-wider uppercase">
+        <div className="section-container h-8 flex items-center justify-between text-[11px] font-terminal tracking-wider uppercase gap-3">
           <div className="flex items-center gap-2 truncate">
             <span className="text-slate-300 font-semibold">CALGARY, AB</span>
             <span className="text-slate-600 hidden sm:inline">•</span>
             <span className="text-slate-400 hidden sm:inline truncate">
-              INDUSTRIAL OPERATIONS &amp; PROGRAM DELIVERY
+              SERVING WESTERN CANADA (AB &amp; BC)
             </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -60,17 +59,15 @@ export default function Navbar() {
           <Link
             href="/"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 group focus:outline-none"
+            className="flex items-center gap-3 group focus:outline-none flex-shrink-0"
           >
             <div className="w-9 h-9 rounded-lg bg-[#090D16] text-white flex items-center justify-center font-terminal text-sm font-bold tracking-tight border border-slate-800 group-hover:bg-[#0052CC] group-hover:border-[#0052CC] transition-colors">
               ES
             </div>
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <span className="font-heading text-base sm:text-[17px] font-bold tracking-tight text-slate-950 leading-none">
-                  ESINNOV
-                </span>
-              </div>
+              <span className="font-heading text-base sm:text-[17px] font-bold tracking-tight text-slate-950 leading-none">
+                ESINNOV
+              </span>
               <span className="text-[11px] text-slate-500 font-medium tracking-tight leading-tight mt-0.5">
                 EcoSync Innovations Inc.
               </span>
@@ -78,33 +75,37 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-6">
+          <nav
+            aria-label="Primary navigation"
+            className="hidden lg:flex items-center gap-5 xl:gap-7"
+          >
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-[13.5px] font-medium text-slate-600 hover:text-slate-950 transition-colors py-1"
+                className="text-[13px] xl:text-[13.5px] font-medium text-slate-600 hover:text-slate-950 transition-colors py-1 whitespace-nowrap"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* Desktop Primary CTA */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Desktop / Tablet Primary CTA & Drawer Trigger */}
+          <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
             <a
-              href="mailto:info@esinnov.com?subject=ESInnov%20Engagement%20Inquiry"
+              href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Inquiry"
               className="btn-primary !py-2.5 !px-4 !text-xs sm:!text-[13px] !rounded-lg"
             >
               <span>Initiate Mandate</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
 
-            {/* Tablet Menu Trigger (visible sm to xl) */}
+            {/* Tablet Menu Trigger (visible sm to lg) */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="xl:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
+              className="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
               aria-label="Toggle navigation menu"
+              aria-expanded={mobileOpen}
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -115,6 +116,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen(!mobileOpen)}
             className="sm:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-800 hover:bg-slate-50 transition-colors"
             aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -129,21 +131,21 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="xl:hidden bg-white border-b border-slate-200 shadow-lg max-h-[calc(100vh-6rem)] overflow-y-auto"
+            className="lg:hidden bg-white border-b border-slate-200 shadow-lg max-h-[calc(100vh-6rem)] overflow-y-auto"
           >
             <div className="section-container py-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {navLinks.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between p-3.5 rounded-lg border border-slate-100 hover:border-slate-300 hover:bg-slate-50 transition-all"
+                    className="flex items-center justify-between p-3.5 rounded-lg border border-slate-200/80 hover:border-slate-300 hover:bg-slate-50 transition-all"
                   >
                     <span className="font-heading text-sm font-semibold text-slate-900">
                       {link.label}
                     </span>
-                    <span className="font-terminal text-xs text-slate-400">
+                    <span className="font-terminal text-xs text-[#0052CC]">
                       {link.index}
                     </span>
                   </a>
@@ -152,10 +154,16 @@ export default function Navbar() {
 
               <div className="mt-5 pt-5 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                 <div className="text-xs text-slate-500 font-terminal">
-                  ADVISORY DESK: <span className="text-slate-900 font-semibold">info@esinnov.com</span>
+                  ADVISORY DESK:{" "}
+                  <a
+                    href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Inquiry"
+                    className="text-slate-900 font-semibold hover:text-[#0052CC]"
+                  >
+                    info@esinnov.com
+                  </a>
                 </div>
                 <a
-                  href="mailto:info@esinnov.com?subject=ESInnov%20Engagement%20Inquiry"
+                  href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Inquiry"
                   onClick={() => setMobileOpen(false)}
                   className="btn-primary !w-full sm:!w-auto !py-3 !px-5 !text-sm"
                 >

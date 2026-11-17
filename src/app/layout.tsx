@@ -18,24 +18,23 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title:
-    "EcoSync Innovations Inc. (ESInnov) — Industrial Operations, Program Delivery & Back-Office Advisory | Calgary",
+    "EcoSync Innovations Inc. (ESInnov) | Industrial Operations, Program Delivery & Applied Systems Advisory",
   description:
-    "Calgary-based operations and industrial systems boutique. Deploying embedded 3–6 month NPI and operational turnaround leadership via prime staffing partners, alongside fixed-fee back-office execution for regional contractors.",
+    "Western Canadian industrial operations and applied systems advisory deploying embedded program delivery, supply chain turnaround, and sovereign workflow automation across Alberta and British Columbia.",
   keywords: [
     "EcoSync Innovations Inc.",
     "ESInnov",
-    "Industrial Operations Consulting Calgary",
-    "NPI Program Delivery",
-    "Operations Turnaround",
-    "Interim Supply Chain Leadership",
-    "Lean Six Sigma Calgary",
-    "ISNetworld Compliance Calgary",
-    "Avetta Compliance",
-    "Quantity Takeoff Estimating Calgary",
-    "Aidin VM",
-    "Industrial Systems Engineering",
+    "Industrial Operations Advisory Western Canada",
+    "Program Delivery Calgary",
+    "Supply Chain 3PL Trade Compliance Turnaround",
+    "NPI Stage-Gate Governance",
+    "Lean Six Sigma Black Belt",
+    "Sovereign Workflow Automation",
+    "Applied Systems Advisory",
+    "EGBC",
+    "Alberta British Columbia Industrial Consulting",
   ],
-  authors: [{ name: "Aidin VM", url: "https://linkedin.com/in/aidinvm" }],
+  authors: [{ name: "EcoSync Innovations Inc." }],
   creator: "EcoSync Innovations Inc.",
   publisher: "EcoSync Innovations Inc.",
   robots: {
@@ -51,9 +50,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "EcoSync Innovations Inc. (ESInnov) — Industrial Operations, Program Delivery & Back-Office Advisory | Calgary",
+      "EcoSync Innovations Inc. (ESInnov) | Industrial Operations, Program Delivery & Applied Systems Advisory",
     description:
-      "Calgary-based operations and industrial systems boutique. Deploying embedded 3–6 month NPI and operational turnaround leadership via prime staffing partners, alongside fixed-fee back-office execution for regional contractors.",
+      "Western Canadian industrial operations and applied systems advisory deploying embedded program delivery, supply chain turnaround, and sovereign workflow automation across Alberta and British Columbia.",
     siteName: "EcoSync Innovations Inc. (ESInnov)",
     type: "website",
     locale: "en_CA",
@@ -62,9 +61,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "EcoSync Innovations Inc. (ESInnov) — Industrial Operations & Program Delivery | Calgary",
+      "EcoSync Innovations Inc. (ESInnov) | Industrial Operations, Program Delivery & Applied Systems Advisory",
     description:
-      "Embedded 3–6 month NPI, program delivery, and operational turnaround mandates alongside productized back-office execution for regional contractors.",
+      "Embedded operational leadership and deterministic workflow systems for complex industries across Western Canada.",
   },
   alternates: {
     canonical: "https://esinnov.com",
@@ -87,24 +86,25 @@ const organizationSchema = {
     height: 512,
   },
   description:
-    "Calgary-based operations and industrial systems boutique deploying senior operational leadership for 3–6 month NPI, program delivery, and operational turnaround mandates alongside productized back-office execution for regional contractors.",
+    "Western Canadian industrial operations and applied systems advisory deploying embedded program delivery, supply chain turnaround, and sovereign workflow automation across Alberta and British Columbia.",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Calgary",
     addressRegion: "Alberta",
     addressCountry: "CA",
   },
-  sameAs: [
-    "https://www.linkedin.com/company/ecosync-innovations/",
-    "https://linkedin.com/in/aidinvm",
+  areaServed: [
+    { "@type": "AdministrativeArea", name: "Alberta" },
+    { "@type": "AdministrativeArea", name: "British Columbia" },
   ],
+  sameAs: ["https://www.linkedin.com/company/ecosync-innovations/"],
   knowsAbout: [
-    "New Product Introduction (NPI) Governance",
-    "Industrial Operations Turnaround",
-    "Supply Chain & 3PL Management",
-    "Lean Six Sigma Process Optimization",
-    "Enterprise IoT Program Delivery",
-    "Commercial Contractor Estimating & Compliance",
+    "New Product Introduction (NPI) & Technical Program Delivery",
+    "Supply Chain, 3PL & Trade Compliance Turnaround",
+    "Operational Excellence & Regulatory Governance",
+    "Deterministic Workflow Automation",
+    "Lean Six Sigma Black Belt",
+    "ISO 9001 Quality Management Systems",
   ],
 };
 
@@ -115,8 +115,8 @@ const personSchema = {
   name: "Aidin VM",
   jobTitle: "Principal Consultant",
   description:
-    "Principal Consultant at EcoSync Innovations Inc. (ESInnov), MSc Industrial Systems Engineering, with 10+ years of senior operations and program delivery leadership across power electronics, enterprise IoT, steel, pharmaceutical distribution, and automotive manufacturing.",
-  url: "https://esinnov.com/#about",
+    "Principal Consultant at EcoSync Innovations Inc. (ESInnov), industrial systems practitioner, Lean Six Sigma Black Belt, and certified Product Management professional with over a decade of senior operations, supply chain, and technical program leadership across North America and Asia.",
+  url: "https://esinnov.com/#about-governance",
   sameAs: ["https://linkedin.com/in/aidinvm"],
   worksFor: {
     "@type": "Organization",
@@ -131,50 +131,42 @@ const faqSchema = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "What mandates does ESInnov accept?",
+      name: "Who leads the advisory practice?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We specialize in 3–6 month embedded industrial mandates—specifically New Product Introduction (NPI), program delivery, supply chain stabilization, and Lean Six Sigma operational turnarounds—alongside fixed-fee back-office services for regional contractors.",
+        text: "The practice is led by Principal Consultant Aidin VM, an experienced industrial systems practitioner, Lean Six Sigma Black Belt, and certified Product Management professional with over a decade of senior operations, supply chain, and technical program leadership across North America and Asia.",
       },
     },
     {
       "@type": "Question",
-      name: "How quickly can ESInnov deploy?",
+      name: "How does ESInnov partner with staffing and consulting firms?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Immediate capacity is available in Calgary (hybrid) with travel capability across Western Canada. Corporate vendor onboarding with staffing partners is completed within 24–48 hours.",
+        text: "We operate as a dedicated corp-to-corp delivery vendor under prime partner Master Services Agreements (MSAs), supplying immediate senior operational and program leadership without competing for permanent placement fees.",
       },
     },
     {
       "@type": "Question",
-      name: "How is confidential operational data handled?",
+      name: "What professional and corporate credentials does ESInnov maintain?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "For embedded industrial engagements, all work is performed exclusively inside the client's enterprise environment (SAP, NetSuite, PLM) under the prime staffing partner's NDA. Zero proprietary data leaves client systems.",
+        text: "EcoSync Innovations Inc. is an incorporated Canadian entity maintaining active corporate registration in Alberta, professional registration with Engineers and Geoscientists British Columbia (EGBC), and commercial general liability and professional coverage tailored for enterprise vendor onboarding.",
       },
     },
     {
       "@type": "Question",
-      name: "Who leads the consulting practice?",
+      name: "How is client data security and confidentiality maintained?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The practice is led by Principal Consultant Aidin VM, an Industrial Systems Engineer (MSc) with over a decade of senior operations and program management leadership across power electronics, IoT, steel, pharma, and automotive sectors.",
+        text: "Embedded mandates and workflow automations run exclusively within the client's existing ERP, PLM, and cloud tenant under strict NDA governance. Zero proprietary BOMs, pricing schedules, or operational records leave client systems.",
       },
     },
     {
       "@type": "Question",
-      name: "Does ESInnov compete with staffing agencies?",
+      name: "How are engagements commercially structured?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "No. We actively partner with established staffing and consulting firms, operating as a reliable corp-to-corp delivery vendor under their existing client MSAs.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How are commercial terms structured?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Embedded industrial contracts are billed corp-to-corp through prime staffing partners or direct corporate agreements. Contractor back-office deliverables are billed on transparent, fixed-scope project or monthly retainers.",
+        text: "Enterprise and staffing-partner mandates are structured as fixed-term corp-to-corp engagements (typically 3–6 months). Applied workflow automation engagements are delivered on fixed-scope milestones tied to measurable operational outcomes.",
       },
     },
   ],

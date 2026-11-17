@@ -8,229 +8,184 @@ import {
   CheckCircle2,
   ChevronDown,
   ShieldCheck,
-  Cpu,
-  FileCheck2,
-  BarChart3,
-  Lock,
-  Layers,
-  Building2,
-  Compass,
+  ShieldAlert,
   Workflow,
+  Database,
+  Lock,
   Mail,
 } from "lucide-react";
 
-const sectorAuthority = [
+const executiveAuthority = [
   {
     index: "01",
-    sector: "Mobile Power & Clean Energy",
-    scope: "Plant & 3PL Supply Chain Leadership",
+    sector: "Clean Energy & Power Electronics",
+    scope: "Multi-Node 3PL, Dual-Shore Sourcing & Trade Governance",
   },
   {
     index: "02",
-    sector: "Enterprise IoT & Telematics",
-    scope: "$5M+ Platform Program Delivery",
+    sector: "Connected Hardware & Mobility",
+    scope: "Stage-Gate Commercialization & Homologation Delivery",
   },
   {
     index: "03",
-    sector: "Heavy & Regulated Industry",
-    scope: "Steel • Pharma Distribution • Automotive",
+    sector: "Regulated & Heavy Manufacturing",
+    scope: "Pharmaceuticals, Structural Steel & Automotive Operations",
   },
   {
     index: "04",
-    sector: "Engineering Foundation",
-    scope: "MSc Industrial Systems Engineering",
+    sector: "Operational & Systems Rigor",
+    scope: "Lean Six Sigma Black Belt • Sovereign Workflow Architecture",
+  },
+];
+
+const practicePillars = [
+  {
+    code: "PRACTICE PILLAR // 01",
+    title: "New Product Introduction (NPI) & Technical Program Delivery",
+    summary:
+      "End-to-end Stage-Gate governance from concept validation and Design for Manufacturability and Assembly (DFM/DFA) through offshore tooling, environmental ingress qualification (IEC 60529 IP67/IP68), and commercial launch.",
+    deliverables: [
+      "Cross-functional hardware, firmware, and cloud telemetry integration oversight",
+      "Critical-path scheduling, vendor qualification, and validation testing",
+      "Structured operational handover, SOP documentation, and production ramp governance",
+    ],
+    ctaLabel: "Inquire Regarding Program Delivery",
+    subject: "NPI%20%26%20Technical%20Program%20Delivery%20Inquiry",
+  },
+  {
+    code: "PRACTICE PILLAR // 02",
+    title: "Supply Chain, 3PL & Trade Compliance Turnaround",
+    summary:
+      "Stabilization of multi-node distribution networks, dual-shore procurement across North America and Asia, and cross-border customs and tariff exposure management.",
+    deliverables: [
+      "Sales and Operations Planning (S&OP) governance and demand alignment",
+      "Bill of Materials (BOM) and multi-warehouse inventory reconciliation",
+      "Multi-currency landed-cost modeling, EDI/ERP fulfillment integration, and working-capital recovery",
+    ],
+    ctaLabel: "Inquire Regarding Supply Chain Turnaround",
+    subject: "Supply%20Chain%2C%203PL%20%26%20Trade%20Compliance%20Turnaround%20Inquiry",
+  },
+  {
+    code: "PRACTICE PILLAR // 03",
+    title: "Operational Excellence & Regulatory Governance",
+    summary:
+      "Floor-level throughput optimization and enterprise compliance administration across ERP and quality management environments.",
+    deliverables: [
+      "Lean Six Sigma value-stream mapping, line balancing, and constraint elimination",
+      "ISO 9001 Quality Management System (QMS) standardization and CAPA execution",
+      "Product environmental compliance governance (REACH, RoHS, TSCA, PFAS, and conflict minerals)",
+    ],
+    ctaLabel: "Inquire Regarding Operational Excellence",
+    subject: "Operational%20Excellence%20%26%20Regulatory%20Governance%20Inquiry",
+  },
+];
+
+const appliedModules = [
+  {
+    index: "01",
+    icon: ShieldAlert,
+    title: "Commercial Scope & Margin Protection Workflows",
+    desc: "Structured ingestion, validation, and audit-ready documentation of field scope variations, contract amendments, and commercial change approvals—preventing unbilled execution leakage before work proceeds.",
+    tag: "Margin Governance",
+  },
+  {
+    index: "02",
+    icon: Workflow,
+    title: "Quote-to-Cash & Operational Velocity Pipelines",
+    desc: "Event-driven, multi-step workflow orchestration covering inbound opportunity capture, structured quote follow-up sequences, receivable aging escalation, and field-to-office scheduling synchronization.",
+    tag: "Revenue Velocity",
+  },
+  {
+    index: "03",
+    icon: Database,
+    title: "ERP, 3PL & Document Intelligence",
+    desc: "Deterministic data pipelines and retrieval-augmented verification workflows that reconcile multi-currency landed costs, customs declarations, and warehouse inventory records with mandatory human sign-off gates.",
+    tag: "HITL Verification",
+  },
+  {
+    index: "04",
+    icon: Lock,
+    title: "Sovereign In-Tenant Architecture",
+    desc: "Built on strict context-isolation and governance standards so proprietary pricing, BOMs, and customer records never leave client infrastructure or train external models.",
+    tag: "Zero Data Leakage",
   },
 ];
 
 const engagementSteps = [
   {
     step: "01",
-    title: "Partner Onboarding",
-    desc: "Prime agencies onboard EcoSync Innovations Inc. as an approved corporate supplier. Vendor credentials and principal CV are dispatched same-day.",
-    tag: "24–48h Turnaround",
+    title: "Rapid Partner Onboarding",
+    desc: "Prime staffing and consulting agencies register EcoSync Innovations Inc. as an approved corp-to-corp delivery vendor. Corporate registration, commercial insurance credentials, and capability documentation are dispatched same-day.",
+    tag: "Same-Day Dispatch",
   },
   {
     step: "02",
-    title: "Mandate Alignment",
-    desc: "Deployment for 3–6 month NPI launches, operational bottleneck resolution, or interim leadership mandates. Direct technical vetting with the client operations team.",
-    tag: "3–6 Month Horizon",
+    title: "Scoped Mandate Alignment",
+    desc: "Structured for 3–6 month embedded operational and technical program mandates (NPI launches, supply chain bottlenecks, interim leadership) or fixed-scope workflow automation deployments across Alberta and British Columbia.",
+    tag: "AB & BC Coverage",
   },
   {
     step: "03",
-    title: "Embedded Execution",
-    desc: "Execution occurs entirely within the client's enterprise environment (ERP/PLM) under the prime firm's NDA. Zero external data exposure; disciplined weekly milestone governance.",
+    title: "Sovereign In-Tenant Execution",
+    desc: "All operational and automation work executes strictly inside the client’s enterprise environment (SAP, NetSuite, Sage, Epicor, PLM, or private cloud tenant) under existing NDAs.",
     tag: "Client-Tenant Native",
   },
 ];
 
-const practiceAreas = [
+const sectorPedigree = [
   {
-    code: "MANDATE // 01",
-    title: "NPI & Program Delivery",
-    desc: "End-to-end governance of new product introductions from design freeze through commercial launch—proven across commercial power electronics and multi-million-dollar IoT platforms.",
-    deliverables: [
-      "Critical path scheduling, risk mitigation & stage-gate governance",
-      "Vendor qualification, build readiness & validation testing",
-      "Structured operational handover & SOP documentation",
-    ],
-    ctaLabel: "Request NPI Mandate",
-    subject: "NPI%20%26%20Program%20Delivery%20Mandate",
-  },
-  {
-    code: "MANDATE // 02",
-    title: "Operations Turnaround",
-    desc: "Systematic elimination of throughput bottlenecks, inventory discrepancies, and administrative drag using applied Lean Six Sigma and industrial systems engineering.",
-    deliverables: [
-      "Floor-level value stream mapping & constraint removal",
-      "Process re-engineering inside existing ERP systems",
-      "Quantifiable cycle-time and working-capital recovery",
-    ],
-    ctaLabel: "Request Turnaround Mandate",
-    subject: "Operations%20Turnaround%20Mandate",
-  },
-  {
-    code: "MANDATE // 03",
-    title: "Supply Chain & Interim Ops",
-    desc: "Immediate leadership coverage for supply chain planning, 3PL kitting transitions, or interim plant management during organizational restructuring or rapid scaling.",
-    deliverables: [
-      "BOM reconciliation, procurement & 3PL warehouse coordination",
-      "Executive KPI dashboards (Power BI / SAP / NetSuite)",
-      "Seamless bridge leadership during executive searches",
-    ],
-    ctaLabel: "Request Interim Coverage",
-    subject: "Supply%20Chain%20%26%20Interim%20Operations%20Coverage",
-  },
-];
-
-const pedigreeTimeline = [
-  {
-    domain: "Mobile Power & Clean Energy Systems",
-    badge: "Calgary, AB",
-    role: "Senior Operations & Supply Chain Leadership",
+    domain: "Clean-Tech & Commercial Power Electronics",
+    tag: "Supply Chain & Trade",
     summary:
-      "Directed manufacturing operations, 3PL warehouse kitting, cross-border logistics, and inventory reconciliation for commercial and off-grid power electronics.",
+      "Governed continent-wide multi-node 3PL distribution, dual-shore procurement, cross-border customs clearance, and regulatory compliance for enterprise solar, inverter, and lithium storage portfolios.",
   },
   {
-    domain: "Industrial IoT & Telematics",
-    badge: "Program Delivery",
-    role: "$5M+ Connected Platform Program Delivery",
+    domain: "Connected Mobility & Enterprise IoT Platforms",
+    tag: "Stage-Gate NPI",
     summary:
-      "Governed multi-disciplinary hardware/software program execution, vendor integration, and commercial deployment for enterprise IoT systems.",
+      "Directed full 18-month Stage-Gate commercialization, distributed hardware/firmware integration, and offshore contract manufacturing for connected telematics and electric powertrain programs.",
   },
   {
-    domain: "Heavy & Regulated Manufacturing",
-    badge: "Multi-Sector",
-    role: "Pharmaceutical Distribution, Steel & Automotive Operations",
+    domain: "Heavy Manufacturing, Automotive & Regulated Logistics",
+    tag: "Operational Excellence",
     summary:
-      "Executed continuous improvement, process optimization, and industrial systems engineering across high-compliance pharmaceutical logistics, structural steel fabrication, and automotive assembly.",
-  },
-  {
-    domain: "Engineering Foundation",
-    badge: "Graduate Credential",
-    role: "MSc Industrial Systems Engineering",
-    summary:
-      "Graduate specialization in systems optimization, process modeling, and operational efficiency.",
+      "Led Lean Six Sigma line balancing, multi-plant SOP standardization, computer-vision quality assurance, and cold-chain compliance across structural steel, automotive assembly, and pharmaceutical distribution operations.",
   },
 ];
 
 const enterpriseStack = [
   "SAP",
   "NetSuite",
+  "Sage 300",
+  "Epicor Eclipse",
+  "Netstock",
   "Arena PLM",
+  "EDI 940/945",
   "Power BI",
   "Python",
-  "NPI Governance",
-  "Lean Six Sigma",
-  "IoT Architecture",
+  "Sovereign Workflow Pipelines",
 ];
 
-const backOfficeServices = [
+const governanceFaqs = [
   {
-    title: "Quantity Takeoff & Estimating",
-    price: "$250 – $800 / takeoff",
-    desc: "Submit architectural drawings; receive structured material takeoffs and bid-ready cost sheets within 48–72 hours.",
-    cta: "Submit Drawings",
-    subject: "Quantity%20Takeoff%20%26%20Estimating%20Scope",
+    q: "Who leads the advisory practice?",
+    a: "The practice is led by Principal Consultant Aidin VM, an experienced industrial systems practitioner, Lean Six Sigma Black Belt, and certified Product Management professional with over a decade of senior operations, supply chain, and technical program leadership across North America and Asia.",
   },
   {
-    title: "ISNetworld & Avetta Compliance",
-    price: "$2,000 – $5,000 / platform",
-    desc: "End-to-end account setup, RAVS manual alignment, and safety documentation management to achieve Grade-A operator approval.",
-    cta: "Initiate Prequalification",
-    subject: "ISNetworld%20%26%20Avetta%20Prequalification",
+    q: "How does ESInnov partner with staffing and consulting firms?",
+    a: "We operate as a dedicated corp-to-corp delivery vendor under prime partner Master Services Agreements (MSAs), supplying immediate senior operational and program leadership without competing for permanent placement fees.",
   },
   {
-    title: "Ledger Cleanup & Bookkeeping",
-    price: "$800+ cleanup • $250+/mo",
-    desc: "Historical catch-up reconciliation and structured monthly financial reporting tailored for trade contractors.",
-    cta: "Request Ledger Review",
-    subject: "Contractor%20Ledger%20Cleanup%20%26%20Bookkeeping",
+    q: "What professional and corporate credentials does ESInnov maintain?",
+    a: "EcoSync Innovations Inc. is an incorporated Canadian entity maintaining active corporate registration in Alberta, professional registration with Engineers and Geoscientists British Columbia (EGBC), and commercial general liability and professional coverage tailored for enterprise vendor onboarding.",
   },
   {
-    title: "Executive Positioning & AI Search",
-    price: "$1,000 – $1,500 / month",
-    desc: "B2B authority building and Generative Engine Optimization (GEO) for commercial trade owners, extracted from brief monthly interviews.",
-    cta: "Request Visibility Audit",
-    subject: "Executive%20Positioning%20%26%20AI%20Search%20Audit",
+    q: "How is client data security and confidentiality maintained?",
+    a: "Embedded mandates and workflow automations run exclusively within the client's existing ERP, PLM, and cloud tenant under strict NDA governance. Zero proprietary BOMs, pricing schedules, or operational records leave client systems.",
   },
   {
-    title: "Municipal Permitting & SECOR",
-    price: "$350–$750 permit • $2.5k+ SECOR",
-    desc: "Municipal development/building permit coordination and complete Alberta SECOR safety program documentation.",
-    cta: "Submit Permit Scope",
-    subject: "Municipal%20Permitting%20%26%20SECOR%20Support",
-  },
-  {
-    title: "Asynchronous Execution SLA",
-    price: "Dedicated Capacity",
-    desc: "Operated on strict SLA turnarounds outside core industrial hours, ensuring zero conflict of interest or capacity overlap with embedded enterprise mandates.",
-    cta: "Contact Back-Office Desk",
-    subject: "Commercial%20Back-Office%20SLA%20Inquiry",
-  },
-];
-
-const automationPillars = [
-  {
-    icon: FileCheck2,
-    title: "Document Verification",
-    desc: "Automated extraction and regulatory cross-referencing with mandatory human sign-off.",
-  },
-  {
-    icon: BarChart3,
-    title: "Operational Telemetry",
-    desc: "Automated Python/Power BI pipelines replacing manual spreadsheet consolidation.",
-  },
-  {
-    icon: Lock,
-    title: "Sovereign Deployment",
-    desc: "Executed exclusively within your existing corporate tenant; zero external model training.",
-  },
-];
-
-const faqs = [
-  {
-    q: "What mandates does ESInnov accept?",
-    a: "We specialize in 3–6 month embedded industrial mandates—specifically New Product Introduction (NPI), program delivery, supply chain stabilization, and Lean Six Sigma operational turnarounds—alongside fixed-fee back-office services for regional contractors.",
-  },
-  {
-    q: "How quickly can ESInnov deploy?",
-    a: "Immediate capacity is available in Calgary (hybrid) with travel capability across Western Canada. Corporate vendor onboarding with staffing partners is completed within 24–48 hours.",
-  },
-  {
-    q: "How is confidential operational data handled?",
-    a: "For embedded industrial engagements, all work is performed exclusively inside the client's enterprise environment (SAP, NetSuite, PLM) under the prime staffing partner's NDA. Zero proprietary data leaves client systems.",
-  },
-  {
-    q: "Who leads the consulting practice?",
-    a: "The practice is led by Principal Consultant Aidin VM, an Industrial Systems Engineer (MSc) with over a decade of senior operations and program management leadership across power electronics, IoT, steel, pharma, and automotive sectors.",
-  },
-  {
-    q: "Does ESInnov compete with staffing agencies?",
-    a: "No. We actively partner with established staffing and consulting firms, operating as a reliable corp-to-corp delivery vendor under their existing client MSAs.",
-  },
-  {
-    q: "How are commercial terms structured?",
-    a: "Embedded industrial contracts are billed corp-to-corp through prime staffing partners or direct corporate agreements. Contractor back-office deliverables are billed on transparent, fixed-scope project or monthly retainers.",
+    q: "How are engagements commercially structured?",
+    a: "Enterprise and staffing-partner mandates are structured as fixed-term corp-to-corp engagements (typically 3–6 months). Applied workflow automation engagements are delivered on fixed-scope milestones tied to measurable operational outcomes.",
   },
 ];
 
@@ -239,23 +194,23 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-950">
-      {/* ===== SECTION 1: HERO (ABOVE THE FOLD) ===== */}
+      {/* ===== SECTION 1: HERO & EXECUTIVE AUTHORITY STRIP ===== */}
       <section className="relative bg-architectural-grid border-b border-slate-200/90 overflow-hidden">
         <div className="bg-radial-fade">
           <div className="section-container py-12 sm:py-16 lg:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
               {/* Primary Hero Column */}
-              <div className="lg:col-span-8 space-y-6 sm:space-y-8">
-                {/* Eyebrow Badge */}
+              <div className="lg:col-span-8 space-y-6 sm:space-y-7">
+                {/* Eyebrow */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35 }}
-                  className="badge-institutional"
+                  className="badge-institutional max-w-full"
                 >
-                  <span className="w-2 h-2 rounded-full bg-emerald-600" />
-                  <span>
-                    Calgary Operations &amp; Industrial Systems Boutique • Active Capacity
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 flex-shrink-0" />
+                  <span className="truncate sm:whitespace-normal">
+                    WESTERN CANADA • INDUSTRIAL OPERATIONS &amp; APPLIED SYSTEMS ADVISORY
                   </span>
                 </motion.div>
 
@@ -266,7 +221,8 @@ export default function HomePage() {
                   transition={{ duration: 0.4, delay: 0.05 }}
                   className="font-heading text-display text-slate-950 text-balance"
                 >
-                  Embedded operations and program delivery for industrial teams.
+                  Embedded operational leadership and deterministic workflow
+                  systems for complex industries.
                 </motion.h1>
 
                 {/* Subheadline */}
@@ -276,38 +232,25 @@ export default function HomePage() {
                   transition={{ duration: 0.4, delay: 0.1 }}
                   className="text-body-lg text-slate-600 max-w-3xl"
                 >
-                  EcoSync Innovations Inc. (ESInnov) deploys senior operational
-                  leadership into industrial organizations for 3–6 month NPI,
-                  program delivery, and operational turnaround mandates —
-                  structured via prime staffing partners or direct corporate
-                  engagement.
+                  EcoSync Innovations Inc. (ESInnov) deploys seasoned program
+                  delivery, supply chain turnaround, and in-tenant workflow
+                  automation into industrial and commercial
+                  organizations—structured for rapid integration through prime
+                  staffing partners or direct corporate mandates.
                 </motion.p>
-
-                {/* Credibility Callout Box (Monospace) */}
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.15 }}
-                  className="callout-monospace max-w-3xl"
-                >
-                  Backed by 10+ years of senior industrial engineering and supply
-                  chain leadership across commercial power electronics, $5M+ IoT
-                  platforms, heavy steel, pharmaceutical distribution, and
-                  automotive manufacturing.
-                </motion.div>
 
                 {/* Hero CTAs */}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
                   className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2"
                 >
                   <a
-                    href="mailto:info@esinnov.com?subject=Contract%20Operations%20%26%20Program%20Delivery"
+                    href="mailto:info@esinnov.com?subject=ESInnov%20Mandate%20Discussion"
                     className="btn-primary !w-full sm:!w-auto"
                   >
-                    <span>Request Delivery Capacity</span>
+                    <span>Initiate Mandate Discussion</span>
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
                   <a
@@ -324,13 +267,13 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.15 }}
+                transition={{ duration: 0.45, delay: 0.12 }}
                 className="lg:col-span-4 w-full"
               >
                 <div className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-7 shadow-sm">
                   <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
                     <span className="font-terminal text-xs uppercase tracking-wider text-slate-500 font-semibold">
-                      MANDATE SPECIFICATIONS
+                      PRACTICE SPECIFICATIONS
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-[11px] font-terminal text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
@@ -338,27 +281,27 @@ export default function HomePage() {
                     </span>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-3.5">
                     {[
                       {
-                        label: "DEPLOYMENT HORIZON",
-                        value: "3–6 Month Fixed-Term Mandates",
-                        sub: "NPI, Turnaround & Interim Coverage",
+                        label: "REGIONAL MANDATE",
+                        value: "Western Canada (Alberta & BC)",
+                        sub: "Calgary HQ • Hybrid & On-Site Deployment",
                       },
                       {
-                        label: "CONTRACTING STRUCTURE",
-                        value: "Prime Staffing MSA or Direct C2C",
-                        sub: "Zero procurement or onboarding friction",
+                        label: "ENGAGEMENT HORIZON",
+                        value: "3–6 Month Embedded or Fixed-Scope",
+                        sub: "Prime Staffing MSA & Direct Corporate",
                       },
                       {
-                        label: "EXECUTION ENVIRONMENT",
-                        value: "100% Client ERP / PLM Native",
-                        sub: "SAP • NetSuite • Arena PLM • Power BI",
+                        label: "SYSTEMS ARCHITECTURE",
+                        value: "Sovereign In-Tenant Execution",
+                        sub: "SAP • NetSuite • Sage 300 • Epicor • PLM",
                       },
                       {
-                        label: "PRINCIPAL LEADERSHIP",
-                        value: "Aidin VM, MSc Ind. Systems Eng.",
-                        sub: "Calgary, AB • Hybrid & Western Canada",
+                        label: "PRACTICE RIGOR",
+                        value: "Lean Six Sigma Black Belt Standard",
+                        sub: "Stage-Gate NPI & Trade Compliance",
                       },
                     ].map((spec) => (
                       <div
@@ -379,12 +322,12 @@ export default function HomePage() {
                   </div>
 
                   <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <span>Dual-Track Practice</span>
+                    <span>Dual-Capability Advisory</span>
                     <a
-                      href="#contractors"
+                      href="#applied-systems"
                       className="font-terminal text-[#0052CC] font-medium hover:underline inline-flex items-center gap-1"
                     >
-                      <span>Back-Office Division</span>
+                      <span>Applied Systems</span>
                       <ArrowRight className="w-3 h-3" />
                     </a>
                   </div>
@@ -395,11 +338,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== SECTION 2: SECTOR AUTHORITY STRIP ===== */}
+      {/* ===== EXECUTIVE AUTHORITY STRIP (4 COLUMNS) ===== */}
       <section className="bg-slate-50/70 border-b border-slate-200/90">
         <div className="section-container py-8 sm:py-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-0 lg:divide-x lg:divide-slate-200/90">
-            {sectorAuthority.map((item) => (
+            {executiveAuthority.map((item) => (
               <div
                 key={item.sector}
                 className="bg-white lg:bg-transparent p-4 sm:p-5 lg:px-6 lg:py-2 rounded-lg lg:rounded-none border border-slate-200/80 lg:border-0 first:lg:pl-0 last:lg:pr-0"
@@ -410,7 +353,7 @@ export default function HomePage() {
                 <div className="font-heading text-base font-semibold text-slate-950">
                   {item.sector}
                 </div>
-                <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium">
+                <div className="text-xs sm:text-sm text-slate-600 mt-1 font-medium leading-snug">
                   {item.scope}
                 </div>
               </div>
@@ -419,26 +362,172 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== SECTION 3: ENGAGEMENT ARCHITECTURE (#engagement-model) ===== */}
+      {/* ===== SECTION 2: CORE ADVISORY PRACTICES (#core-practices) ===== */}
+      <section
+        id="core-practices"
+        className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <div className="eyebrow-label mb-3">CORE ADVISORY PRACTICES</div>
+            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
+              Targeted execution mandates. Senior operational rigor.
+            </h2>
+            <p className="text-body-lg text-slate-600">
+              ESInnov steps into high-friction operating environments where
+              organizations require experienced execution leadership rather than
+              theoretical recommendations.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            {practicePillars.map((pillar, i) => (
+              <motion.div
+                key={pillar.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.08 }}
+                className="institutional-card-interactive p-6 sm:p-8 flex flex-col justify-between bg-white"
+              >
+                <div>
+                  <div className="font-terminal text-xs text-[#0052CC] font-semibold mb-3">
+                    {pillar.code}
+                  </div>
+                  <h3 className="font-heading text-xl sm:text-[22px] text-slate-950 mb-3 leading-snug">
+                    {pillar.title}
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed mb-6">
+                    {pillar.summary}
+                  </p>
+
+                  <div className="border-t border-slate-100 pt-5 mb-6">
+                    <div className="font-terminal text-[11px] uppercase tracking-wider text-slate-400 mb-3.5">
+                      CORE DELIVERABLES
+                    </div>
+                    <ul className="space-y-3">
+                      {pillar.deliverables.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-2.5 text-sm text-slate-700 leading-snug"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-[#0052CC] flex-shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <a
+                    href={`mailto:info@esinnov.com?subject=${pillar.subject}`}
+                    className="link-action"
+                  >
+                    <span>{pillar.ctaLabel}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 3: APPLIED SYSTEMS & WORKFLOW AUTOMATION (#applied-systems) ===== */}
+      <section
+        id="applied-systems"
+        className="py-16 sm:py-20 lg:py-28 bg-slate-50/70 border-b border-slate-200/80"
+      >
+        <div className="section-container">
+          <div className="max-w-3xl mb-12 lg:mb-16">
+            <div className="eyebrow-label mb-3">
+              APPLIED SYSTEMS &amp; WORKFLOW AUTOMATION
+            </div>
+            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
+              Deterministic workflow automation engineered for commercial
+              operations.
+            </h2>
+            <p className="text-body-lg text-slate-600">
+              Beyond embedded leadership, ESInnov architects human-in-the-loop
+              (HITL) automated workflows that eliminate administrative latency,
+              margin leakage, and manual reconciliation across industrial and
+              commercial operations—deployed strictly within client-controlled
+              infrastructure.
+            </p>
+          </div>
+
+          {/* 4 Applied Capability Modules (2x2 Grid) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {appliedModules.map((mod, i) => (
+              <motion.div
+                key={mod.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className="institutional-card p-6 sm:p-8 bg-white flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-lg bg-[#0052CC]/10 border border-[#0052CC]/20 flex items-center justify-center">
+                      <mod.icon className="w-5 h-5 text-[#0052CC]" />
+                    </div>
+                    <span className="font-terminal text-[11px] uppercase tracking-wider px-2.5 py-1 rounded bg-slate-100 text-slate-600 font-medium">
+                      {mod.tag}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-lg sm:text-xl text-slate-950 mb-3">
+                    {mod.title}
+                  </h3>
+                  <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
+                    {mod.desc}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between font-terminal text-[11px] text-slate-400">
+                  <span>MODULE // {mod.index}</span>
+                  <span>IN-TENANT GOVERNANCE</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Section CTA */}
+          <div className="mt-10 sm:mt-12 flex items-center justify-start">
+            <a
+              href="mailto:info@esinnov.com?subject=Applied%20Workflow%20Architecture%20Review"
+              className="btn-primary !w-full sm:!w-auto"
+            >
+              <span>Request an Applied Workflow Architecture Review</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 4: ENGAGEMENT ARCHITECTURE (#engagement-model) ===== */}
       <section
         id="engagement-model"
         className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
       >
         <div className="section-container">
           <div className="max-w-3xl mb-12 lg:mb-16">
-            <div className="eyebrow-label mb-3">ENGAGEMENT ARCHITECTURE</div>
+            <div className="eyebrow-label mb-3">ENGAGEMENT MODEL</div>
             <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
-              Seamless integration via prime staffing and consulting partners.
+              Frictionless onboarding via prime staffing and consulting
+              partners.
             </h2>
             <p className="text-body-lg text-slate-600">
               ESInnov operates as an agile corporate delivery partner. We
-              integrate directly through established Calgary staffing and
-              engineering firms under existing Master Services Agreements (MSAs)
-              and strict NDAs—eliminating procurement friction.
+              integrate directly through established Western Canadian staffing,
+              engineering, and consulting firms under existing Master Services
+              Agreements (MSAs) and strict non-disclosure protocols—or deploy
+              scoped workflow automation directly for commercial operators.
             </p>
           </div>
 
-          {/* 3-Step Execution Cards */}
+          {/* 3-Step Partner & Client Integration Flow */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {engagementSteps.map((card, i) => (
               <motion.div
@@ -473,150 +562,55 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
-
-          {/* Closing Anchor & CTA */}
-          <div className="mt-10 sm:mt-12 p-6 sm:p-8 rounded-xl bg-slate-50 border border-slate-200/90 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-1">
-              <div className="font-terminal text-xs uppercase tracking-wider text-[#0052CC] font-semibold">
-                CORP-TO-CORP DELIVERY STANDARD
-              </div>
-              <p className="font-heading text-base sm:text-lg text-slate-900">
-                Structured exclusively for fixed-term contract delivery and
-                operational execution.
-              </p>
-            </div>
-            <a
-              href="mailto:info@esinnov.com?subject=Prime%20Partner%20Vendor%20Onboarding"
-              className="btn-primary !w-full md:!w-auto flex-shrink-0"
-            >
-              <span>Initiate Partner Onboarding</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
         </div>
       </section>
 
-      {/* ===== SECTION 4: CORE PRACTICE AREAS (#services) ===== */}
+      {/* ===== SECTION 5: SECTOR PEDIGREE & ENTERPRISE STACK (#sector-pedigree) ===== */}
       <section
-        id="services"
+        id="sector-pedigree"
         className="py-16 sm:py-20 lg:py-28 bg-slate-50/60 border-b border-slate-200/80"
-      >
-        <div className="section-container">
-          <div className="max-w-3xl mb-12 lg:mb-16">
-            <div className="eyebrow-label mb-3">CORE PRACTICE AREAS</div>
-            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
-              Targeted execution mandates. Senior industrial rigor.
-            </h2>
-            <p className="text-body-lg text-slate-600">
-              We step into high-friction environments where organizations require
-              an experienced operator to stabilize execution rather than deliver
-              theoretical slide decks.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            {practiceAreas.map((practice, i) => (
-              <motion.div
-                key={practice.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: i * 0.08 }}
-                className="institutional-card-interactive p-6 sm:p-8 flex flex-col justify-between bg-white"
-              >
-                <div>
-                  <div className="font-terminal text-xs text-[#0052CC] font-semibold mb-3">
-                    {practice.code}
-                  </div>
-                  <h3 className="font-heading text-xl sm:text-2xl text-slate-950 mb-3">
-                    {practice.title}
-                  </h3>
-                  <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed mb-6">
-                    {practice.desc}
-                  </p>
-
-                  <div className="border-t border-slate-100 pt-5 mb-6">
-                    <div className="font-terminal text-[11px] uppercase tracking-wider text-slate-400 mb-3.5">
-                      KEY DELIVERABLES
-                    </div>
-                    <ul className="space-y-3">
-                      {practice.deliverables.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-2.5 text-sm text-slate-700 leading-snug"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-[#0052CC] flex-shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100">
-                  <a
-                    href={`mailto:info@esinnov.com?subject=${practice.subject}`}
-                    className="link-action"
-                  >
-                    <span>{practice.ctaLabel}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 5: SECTOR PEDIGREE (#proof) ===== */}
-      <section
-        id="proof"
-        className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
       >
         <div className="section-container">
           <div className="max-w-3xl mb-12 lg:mb-16">
             <div className="eyebrow-label mb-3">SECTOR PEDIGREE</div>
             <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
-              Verified industrial domain experience.
+              Proven execution across regulated and capital-intensive sectors.
             </h2>
             <p className="text-body-lg text-slate-600">
-              Our practice is built on a decade of direct operational
-              accountability across complex manufacturing, distribution, and
-              technology sectors.
+              Our practice draws on over a decade of direct operational
+              accountability across North American and international
+              manufacturing, distribution, and technology programs.
             </p>
           </div>
 
-          {/* Anonymized Domain Timeline */}
-          <div className="border-t border-slate-200">
-            {pedigreeTimeline.map((item, idx) => (
+          {/* Anonymized Domain Track Record */}
+          <div className="border-t border-slate-200 bg-white rounded-xl border border-slate-200/90 px-4 sm:px-8 divide-y divide-slate-200 shadow-2xs">
+            {sectorPedigree.map((item, idx) => (
               <motion.div
                 key={item.domain}
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.06 }}
-                className="py-7 sm:py-8 border-b border-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start hover:bg-slate-50/60 transition-colors px-2 sm:px-4 -mx-2 sm:-mx-4 rounded-lg"
+                className="py-7 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-start"
               >
-                <div className="lg:col-span-4 space-y-1.5">
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="font-terminal text-xs font-semibold text-[#0052CC]">
+                <div className="lg:col-span-5 space-y-2">
+                  <div className="flex items-start gap-2.5">
+                    <span className="font-terminal text-xs font-semibold text-[#0052CC] mt-1">
                       0{idx + 1}
                     </span>
-                    <h3 className="font-heading text-lg text-slate-950">
+                    <h3 className="font-heading text-lg sm:text-xl text-slate-950 leading-snug">
                       {item.domain}
                     </h3>
                   </div>
-                  <div>
+                  <div className="pl-6">
                     <span className="inline-block font-terminal text-[11px] uppercase tracking-wider px-2.5 py-0.5 rounded bg-slate-100 text-slate-600">
-                      {item.badge}
+                      {item.tag}
                     </span>
                   </div>
                 </div>
 
-                <div className="lg:col-span-8 space-y-2">
-                  <div className="font-heading text-base font-semibold text-slate-900">
-                    {item.role}
-                  </div>
+                <div className="lg:col-span-7">
                   <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">
                     {item.summary}
                   </p>
@@ -625,17 +619,17 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* Enterprise Stack Strip */}
-          <div className="mt-10 sm:mt-12 p-5 sm:p-6 rounded-xl bg-slate-50 border border-slate-200/90">
+          {/* Enterprise Systems & Methodologies Strip */}
+          <div className="mt-8 sm:mt-10 p-5 sm:p-6 rounded-xl bg-white border border-slate-200/90">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <span className="font-terminal text-xs uppercase tracking-wider text-slate-500 font-semibold flex-shrink-0">
-                ENTERPRISE STACK &amp; METHODOLOGIES:
+                ENTERPRISE SYSTEMS &amp; METHODOLOGIES:
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 {enterpriseStack.map((tech) => (
                   <span
                     key={tech}
-                    className="px-3 py-1.5 rounded-md bg-white border border-slate-200 font-terminal text-xs font-medium text-slate-800 shadow-2xs"
+                    className="px-3 py-1.5 rounded-md bg-slate-50 border border-slate-200 font-terminal text-xs font-medium text-slate-800"
                   >
                     {tech}
                   </span>
@@ -646,259 +640,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== SECTION 6: COMMERCIAL BACK-OFFICE DIVISION (#contractors) ===== */}
+      {/* ===== SECTION 6: ABOUT US & GOVERNANCE FAQ (#about-governance) ===== */}
       <section
-        id="contractors"
-        className="py-16 sm:py-20 lg:py-28 bg-slate-50/70 border-b border-slate-200/80"
-      >
-        <div className="section-container">
-          <div className="max-w-3xl mb-12 lg:mb-16">
-            <div className="eyebrow-label mb-3">
-              COMMERCIAL BACK-OFFICE DIVISION
-            </div>
-            <h2 className="font-heading text-headline text-slate-950 mb-4 text-balance">
-              Productized back-office execution for regional contractors.
-            </h2>
-            <p className="text-body-lg text-slate-600">
-              Dedicated remote administrative, compliance, and estimating support
-              for Calgary trades and general contractors. Fixed-scope
-              deliverables, rapid turnaround, zero overhead.
-            </p>
-          </div>
-
-          {/* 6 Productized Micro-Service Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {backOfficeServices.map((service, i) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: i * 0.06 }}
-                className="institutional-card-interactive p-6 sm:p-7 bg-white flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
-                    <span className="font-terminal text-[11px] text-slate-400">
-                      DESK // 0{i + 1}
-                    </span>
-                    <span className="price-tag">{service.price}</span>
-                  </div>
-                  <h3 className="font-heading text-lg sm:text-xl text-slate-950 mb-2.5">
-                    {service.title}
-                  </h3>
-                  <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                    {service.desc}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100">
-                  <a
-                    href={`mailto:info@esinnov.com?subject=${service.subject}`}
-                    className="link-action"
-                  >
-                    <span>{service.cta}</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 7: APPLIED AUTOMATION CAPABILITY (#ai-capability) ===== */}
-      <section
-        id="ai-capability"
+        id="about-governance"
         className="py-16 sm:py-20 lg:py-28 bg-white border-b border-slate-200/80"
       >
         <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-            <div className="lg:col-span-5 space-y-5">
-              <div className="eyebrow-label">APPLIED AUTOMATION</div>
-              <h2 className="font-heading text-headline text-slate-950 text-balance">
-                Pragmatic workflow automation integrated into operations.
-              </h2>
-              <p className="text-body-lg text-slate-600">
-                ESInnov deploys targeted automation scripts and human-in-the-loop
-                AI workflows to eliminate repetitive administrative
-                bottlenecks—including document verification, ERP data extraction,
-                compliance auditing, and automated reporting. Systems are
-                deployed strictly inside client-controlled infrastructure with
-                zero external data retention.
-              </p>
-              <div className="pt-2">
-                <a
-                  href="mailto:info@esinnov.com?subject=Applied%20Workflow%20Automation%20Inquiry"
-                  className="link-action !text-base"
-                >
-                  <span>Inquire about applied automation</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-5">
-              {automationPillars.map((pillar, i) => (
-                <motion.div
-                  key={pillar.title}
-                  initial={{ opacity: 0, y: 14 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: i * 0.08 }}
-                  className="institutional-card p-6 bg-slate-50/50 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-10 h-10 rounded-lg bg-[#0052CC]/10 border border-[#0052CC]/20 flex items-center justify-center mb-5">
-                      <pillar.icon className="w-5 h-5 text-[#0052CC]" />
-                    </div>
-                    <h3 className="font-heading text-base sm:text-lg text-slate-950 mb-2">
-                      {pillar.title}
-                    </h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      {pillar.desc}
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-3 border-t border-slate-200/70 font-terminal text-[11px] text-slate-400">
-                    GOVERNED EXECUTION
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 8: CORPORATE PROFILE (#about) ===== */}
-      <section
-        id="about"
-        className="py-16 sm:py-20 lg:py-28 bg-slate-50/70 border-b border-slate-200/80"
-      >
-        <div className="section-container">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start mb-16 lg:mb-20">
             <div className="lg:col-span-5 space-y-4">
-              <div className="eyebrow-label">CORPORATE PROFILE</div>
+              <div className="eyebrow-label">ABOUT US &amp; GOVERNANCE</div>
               <h2 className="font-heading text-headline text-slate-950 text-balance">
-                Industrial rigor. Boutique agility.
+                Institutional rigor. Boutique agility.
               </h2>
-              <div className="p-5 rounded-xl bg-white border border-slate-200/90 space-y-3 mt-6">
-                <div className="font-terminal text-xs uppercase tracking-wider text-[#0052CC] font-semibold">
-                  PRINCIPAL LEADERSHIP
-                </div>
-                <div className="font-heading text-lg text-slate-950">
-                  Aidin VM — Principal Consultant
-                </div>
-                <div className="text-xs font-terminal text-slate-500">
-                  MSc Industrial Systems Engineering
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  10+ years directing industrial operations, NPI governance, and
-                  enterprise program delivery across complex manufacturing and
-                  supply chain environments.
-                </p>
+              <div className="p-4 sm:p-5 rounded-lg bg-[#090D16] text-white font-terminal text-xs flex flex-wrap items-center justify-between gap-3 mt-4">
+                <span>EcoSync Innovations Inc. (ESInnov)</span>
+                <span className="text-emerald-400">
+                  Calgary, AB • Serving Western Canada
+                </span>
               </div>
             </div>
 
-            <div className="lg:col-span-7 space-y-6">
-              <div className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-9 space-y-5 text-slate-700 text-base sm:text-[17px] leading-relaxed shadow-xs">
+            <div className="lg:col-span-7">
+              <div className="bg-slate-50/70 border border-slate-200/90 rounded-xl p-6 sm:p-9 text-slate-700 text-base sm:text-[17px] leading-relaxed">
                 <p>
                   <strong className="text-slate-950 font-semibold">
                     EcoSync Innovations Inc. (ESInnov)
                   </strong>{" "}
-                  is an operations and systems engineering boutique headquartered
-                  in Calgary. Led by Principal Consultant Aidin VM (MSc
-                  Industrial Systems Engineering), the firm bridges the gap
-                  between high-level strategic planning and floor-level
-                  operational execution.
+                  is a Western Canadian industrial operations and applied systems
+                  advisory headquartered in Calgary, Alberta, serving industrial
+                  and commercial clients across Alberta and British Columbia.
+                  The firm bridges executive operational strategy, floor-level
+                  execution, and deterministic workflow automation—stabilizing
+                  supply chains, governing complex product launches, and
+                  eliminating revenue-leaking administrative friction without the
+                  overhead of large consultancies.
                 </p>
-                <p>
-                  Rather than operating as a traditional management consultancy
-                  that leaves behind theoretical recommendations, ESInnov embeds
-                  directly into client teams for fixed-term mandates—stabilizing
-                  new product introductions, untangling supply chain bottlenecks,
-                  and building resilient administrative workflows.
-                </p>
-                <p>
-                  Through our dedicated Commercial Back-Office division, we
-                  extend this same systematic discipline to regional contractors,
-                  removing compliance, estimating, and administrative friction so
-                  business owners can focus on field execution.
-                </p>
-              </div>
-
-              {/* Institutional Profile Strip */}
-              <div className="p-4 sm:p-5 rounded-lg bg-[#090D16] text-white font-terminal text-xs flex flex-wrap items-center justify-between gap-3">
-                <span>EcoSync Innovations Inc. (ESInnov)</span>
-                <span className="text-slate-500 hidden sm:inline">•</span>
-                <span className="text-slate-300">Calgary, Alberta</span>
-                <span className="text-slate-500 hidden sm:inline">•</span>
-                <span className="text-emerald-400">
-                  Corp-to-Corp &amp; Staffing Partner Ready
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== SECTION 9: DIRECT ENGAGEMENT & FAQ (#contact) ===== */}
-      <section id="contact" className="py-16 sm:py-20 lg:py-28 bg-white">
-        <div className="section-container">
-          {/* Direct Engagement Card */}
-          <div className="rounded-2xl bg-slate-50 border border-slate-200/90 p-6 sm:p-10 lg:p-12 mb-16 lg:mb-24">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-8 space-y-4">
-                <div className="eyebrow-label">DIRECT ENGAGEMENT</div>
-                <h2 className="font-heading text-headline text-slate-950 text-balance">
-                  Initiate a mandate or partner onboarding.
-                </h2>
-                <p className="text-body-lg text-slate-600 max-w-2xl">
-                  For staffing partners and industrial operations leaders seeking
-                  interim program or operations management, contact our advisory
-                  desk with mandate scope and timeline. For commercial
-                  contractors seeking takeoff, ISNetworld, or bookkeeping
-                  support, submit your project specifications for same-day
-                  review.
-                </p>
-                <p className="text-xs font-terminal text-slate-500 pt-2">
-                  Calgary, Alberta • Hybrid &amp; Travel Capable • Commercial
-                  terms provided upon scope review. Strict confidentiality
-                  maintained under prime partner MSAs and corporate NDAs.
-                </p>
-              </div>
-
-              <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-stretch gap-3">
-                <a
-                  href="mailto:info@esinnov.com?subject=ESInnov%20Engagement%20Inquiry"
-                  className="btn-primary !py-4 !px-6 !text-base w-full"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>Contact Advisory Desk</span>
-                </a>
-                <div className="text-center font-terminal text-xs text-slate-500 py-1">
-                  Direct Dispatch:{" "}
-                  <a
-                    href="mailto:info@esinnov.com"
-                    className="text-slate-900 font-semibold hover:text-[#0052CC]"
-                  >
-                    info@esinnov.com
-                  </a>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Institutional FAQ Accordion */}
+          {/* Governance & Leadership FAQ */}
           <div className="max-w-4xl mx-auto">
-            <div className="mb-8 sm:mb-10">
-              <div className="eyebrow-label mb-2">INSTITUTIONAL GOVERNANCE</div>
+            <div className="mb-8">
+              <div className="eyebrow-label mb-2">GOVERNANCE &amp; LEADERSHIP</div>
               <h3 className="font-heading text-2xl sm:text-3xl text-slate-950">
-                Frequently Asked Questions
+                Governance &amp; Leadership FAQ
               </h3>
             </div>
 
             <div className="divide-y divide-slate-200 border-t border-b border-slate-200">
-              {faqs.map((faq, index) => {
+              {governanceFaqs.map((faq, index) => {
                 const isOpen = openFaq === index;
                 return (
                   <div key={faq.q} className="py-1">
@@ -940,6 +731,47 @@ export default function HomePage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 7: DIRECT CONTACT PRE-FOOTER CALLOUT (#contact) ===== */}
+      <section id="contact" className="py-16 sm:py-20 bg-slate-50/70">
+        <div className="section-container">
+          <div className="rounded-2xl bg-white border border-slate-200/90 p-6 sm:p-10 lg:p-12 shadow-xs">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-8 space-y-4">
+                <div className="eyebrow-label">DIRECT ADVISORY DESK</div>
+                <h2 className="font-heading text-headline text-slate-950 text-balance">
+                  Initiate a mandate or vendor registration.
+                </h2>
+                <p className="text-body-lg text-slate-600 max-w-2xl">
+                  For staffing partners and operations leaders seeking embedded
+                  program or supply chain leadership, or commercial operators
+                  scoping workflow automation, contact our advisory desk for
+                  same-day review.
+                </p>
+              </div>
+
+              <div className="lg:col-span-4 flex flex-col items-stretch gap-3">
+                <a
+                  href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
+                  className="btn-primary !py-4 !px-6 !text-base w-full"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Contact Advisory Desk</span>
+                </a>
+                <div className="text-center font-terminal text-xs text-slate-500 py-1">
+                  Direct Dispatch:{" "}
+                  <a
+                    href="mailto:info@esinnov.com?subject=ESInnov%20Advisory%20Inquiry"
+                    className="text-slate-900 font-semibold hover:text-[#0052CC]"
+                  >
+                    info@esinnov.com
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
