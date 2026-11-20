@@ -2,7 +2,7 @@
 
 > **Institutional Boutique Architecture** | Version 4.0  
 > **Entity:** EcoSync Innovations Inc. (ESInnov)  
-> **Headquarters:** Calgary, Alberta • Serving Western Canada (AB & BC)
+> **Headquarters:** Calgary, Alberta • Serving Western Canada (AB, SK, MB & BC)
 
 ---
 
